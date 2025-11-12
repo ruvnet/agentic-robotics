@@ -10,6 +10,10 @@ This directory contains a comprehensive set of robot implementations demonstrati
 | `02-autonomous-navigator.ts` | **Intermediate** | Pathfinding, obstacle avoidance, LIDAR | 30s |
 | `03-multi-robot-coordinator.ts` | **Advanced** | Task allocation, coordination, leader election | 30s |
 | `04-swarm-intelligence.ts` | **Exotic** | Flocking, emergent behavior, stigmergy | 60s |
+| `05-robotic-arm-manipulation.ts` | **Advanced** | Inverse kinematics, trajectory planning, grasping | 40s |
+| `06-vision-tracking.ts` | **Intermediate** | Object detection, Kalman filtering, visual servoing | 30s |
+| `07-behavior-tree.ts` | **Advanced** | Hierarchical behaviors, reactive control | 30s |
+| `08-adaptive-learning.ts` | **Exotic** | Experience-based learning, strategy optimization | 25s |
 
 ## Prerequisites
 
@@ -378,3 +382,238 @@ MIT License - See main repository LICENSE file
 - **Swarm Intelligence**: Reynolds, C. W. (1987). Flocks, herds and schools
 
 **Questions?** Open an issue on GitHub!
+
+---
+
+### Example 5: Robotic Arm Manipulation
+
+**Advanced 6-DOF robotic arm control**
+
+```bash
+# Run with default arm ID
+node examples/05-robotic-arm-manipulation.ts
+
+# Run with custom arm ID
+node examples/05-robotic-arm-manipulation.ts my-arm
+```
+
+**What it demonstrates:**
+- Forward and inverse kinematics for 6-DOF arm
+- Trajectory planning with smooth motion
+- Grasp planning and execution
+- Pick-and-place operations
+- Collision checking
+- Joint space and Cartesian space control
+
+**Features:**
+- Simplified DH parameters for arm kinematics
+- Smooth cubic interpolation for trajectories
+- Approach-grasp-retreat sequence
+- Multiple object manipulation (3 objects)
+- Unreachability detection
+
+**Expected output:**
+```
+🦾 Robotic Arm manipulator-1 started!
+📍 End-effector position: (0.883, 0.000, 0.463)
+📦 Generated 3 objects for manipulation
+
+🎯 Pick and Place: cube-red → (0.30, 0.30, 0.05)
+   📋 Planning grasp...
+   ➡️  Moving to approach position...
+   ⬇️  Descending to grasp...
+   🤏 Closing gripper...
+   ⬆️  Lifting object...
+   ➡️  Moving to target...
+   ⬇️  Placing object...
+   ✋ Opening gripper...
+   ✅ Pick and place complete in 8.12s
+```
+
+---
+
+### Example 6: Vision-Based Object Tracking
+
+**Intermediate computer vision and tracking**
+
+```bash
+# Run with default tracker ID
+node examples/06-vision-tracking.ts
+
+# Run with custom tracker ID
+node examples/06-vision-tracking.ts my-tracker
+```
+
+**What it demonstrates:**
+- Real-time object detection simulation
+- Multi-object tracking with Kalman filters
+- Data association using IoU (Intersection over Union)
+- Visual servoing for camera control
+- Track lifecycle management
+- Priority-based target selection
+
+**Tracking pipeline:**
+1. Detect objects in frame
+2. Associate detections with existing tracks
+3. Update Kalman filters (position + velocity)
+4. Select highest priority target
+5. Pan/tilt camera to center target
+6. Handle track creation and deletion
+
+**Expected output:**
+```
+👁️  Vision Tracker vision-1 started!
+📷 Camera: Pan=0.00, Tilt=0.00, FOV=60.0°
+
+   ✨ New track: person at (0.52, 0.48)
+   ✨ New track: car at (0.31, 0.62)
+   ✨ New track: ball at (0.69, 0.41)
+
+📊 Frame 10 - Tracking 3 objects:
+   🎯 person: pos=(0.51, 0.49) vel=(-0.01, 0.02) age=10 priority=0.89
+      car: pos=(0.32, 0.63) vel=(0.02, -0.01) age=8 priority=0.54
+      ball: pos=(0.70, 0.40) vel=(0.03, -0.03) age=6 priority=0.31
+   📷 Camera: pan=1.2° tilt=-0.8°
+```
+
+---
+
+### Example 7: Reactive Behavior Tree
+
+**Advanced hierarchical behavior control**
+
+```bash
+# Run with default security robot ID
+node examples/07-behavior-tree.ts
+
+# Run with custom ID
+node examples/07-behavior-tree.ts security-2
+```
+
+**What it demonstrates:**
+- Behavior tree architecture (Selector, Sequence, Parallel nodes)
+- Decorators (Inverter, Repeater)
+- Condition checking (battery, threats)
+- Action execution (patrol, investigate, charge)
+- Priority-based behavior switching
+- Reactive response to threats
+
+**Behavior hierarchy:**
+```
+Root (Selector - priority based)
+├─ Battery Management (Sequence)
+│  ├─ Battery Low? (Condition)
+│  └─ Charge or Go to Charger (Selector)
+├─ Threat Response (Sequence)
+│  ├─ Threat Detected? (Condition)
+│  ├─ Investigate & Alert (Parallel)
+│  └─ Clear Threat (Action)
+└─ Normal Patrol (Sequence)
+   ├─ Not Charging (Inverter)
+   └─ Patrol (Action)
+```
+
+**Expected output:**
+```
+🤖 Security Robot security-1 started!
+📍 Position: (0, 0)
+🔋 Battery: 80%
+🚶 Patrol waypoints: 4
+
+   ✓ Reached waypoint 1
+
+⚠️  Threat detected: intruder at (3.42, -2.15), severity: 0.78
+
+   🔍 Investigating intruder at (3.42, -2.15)
+   🚨 ALERT: High-severity intruder detected!
+   ℹ️  Threat investigated: intruder (severity: 0.78)
+
+   🔋 Battery low (28.3%), returning to charger...
+   ✅ Fully charged!
+```
+
+---
+
+### Example 8: Adaptive Learning Robot
+
+**Exotic meta-learning and strategy optimization**
+
+```bash
+# Run with default learner ID and 12 tasks
+node examples/08-adaptive-learning.ts
+
+# Run with custom ID and task count
+node examples/08-adaptive-learning.ts my-learner 20
+```
+
+**What it demonstrates:**
+- Experience-based strategy selection
+- Success rate tracking and updating
+- Multi-criteria decision making
+- Epsilon-greedy exploration
+- Performance improvement over time
+- AgentDB skill consolidation
+- Meta-learning (learning optimal strategies)
+
+**Learning process:**
+1. Initialize baseline strategies for each task type
+2. Load past experiences from AgentDB
+3. For each task:
+   - Select best strategy using success rate, efficiency, and exploration
+   - Execute task and measure performance
+   - Update strategy statistics with exponential moving average
+   - Store experience in memory
+4. Consolidate learned skills
+
+**Expected output:**
+```
+🧠 Adaptive Learning Robot learner-1 started!
+📚 Loading past experiences from memory...
+
+   📖 Loaded 0 navigate experiences
+   🔗 Consolidated 0 skills
+
+🎯 Starting adaptive learning session with 12 tasks...
+
+📋 Task 1: navigate
+   Target: (3.24, -1.85)
+   Difficulty: 52%
+   Selected Strategy: safe_path
+   Expected Success: 80.0%
+
+   ⏳ Progress: 30%
+   ⏳ Progress: 60%
+   ⏳ Progress: 90%
+
+   ✅ SUCCESS in 12.34s
+   Confidence: 80.0%
+
+...
+
+============================================================
+📊 Learning Session Summary
+
+Total Tasks: 12
+Overall Success Rate: 75.0%
+Average Confidence: 78.3%
+
+Performance by Task Type:
+
+  NAVIGATE:
+    Success Rate: 83.3% (5/6)
+      safe_path: 90.2% (used 4x, avg 14.2s)
+      dynamic_replan: 75.0% (used 2x, avg 11.8s)
+
+  MANIPULATE:
+    Success Rate: 66.7% (2/3)
+      precise_grasp: 85.1% (used 2x, avg 11.5s)
+      fast_grasp: 50.0% (used 1x, avg 8.3s)
+
+📈 Learning Curve:
+  First Half: 66.7%
+  Second Half: 83.3%
+  Improvement: +16.6%
+
+============================================================
+```
+
