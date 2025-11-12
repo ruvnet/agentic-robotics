@@ -145,3 +145,6 @@ Cargo.lock
 
 # TypeScript build output
 packages/*/dist/
+
+# Package lock files (workspace uses package-lock.json at root)
+package-lock.json
