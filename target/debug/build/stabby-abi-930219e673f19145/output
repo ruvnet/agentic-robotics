@@ -1,0 +1,7 @@
+cargo:rustc-check-cfg=cfg(stabby_max_tuple, values(any()))
+cargo:rustc-check-cfg=cfg(stabby_nightly, values(none()))
+cargo:rustc-check-cfg=cfg(stabby_default_alloc, values("RustAlloc", "LibcAlloc", "disabled"))
+cargo:rustc-check-cfg=cfg(stabby_check_unreachable, values(none(), "true", "false"))
+cargo:rustc-check-cfg=cfg(stabby_unsafe_wakers, values(none(), "true", "false"))
+cargo:rustc-check-cfg=cfg(stabby_vtables, values(none(), "vec", "btree", "no_alloc"))
+cargo:rustc-cfg=stabby_default_alloc="RustAlloc"

@@ -1,0 +1,11 @@
+/home/user/vibecast/target/debug/deps/zenoh_plugin_trait-9745bfaafd7279d0.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/compatibility.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager/dynamic_plugin.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager/static_plugin.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/plugin.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/vtable.rs
+
+/home/user/vibecast/target/debug/deps/libzenoh_plugin_trait-9745bfaafd7279d0.rmeta: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/compatibility.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager/dynamic_plugin.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager/static_plugin.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/plugin.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/vtable.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/compatibility.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager/dynamic_plugin.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/manager/static_plugin.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/plugin.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-plugin-trait-1.6.2/src/vtable.rs:

@@ -1,0 +1,10 @@
+/home/user/vibecast/target/debug/deps/zenoh_collections-0a716b52d669721b.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/single_or_vec.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/single_or_box_hashset.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/ring_buffer.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/stack_buffer.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/int_hash_map.rs
+
+/home/user/vibecast/target/debug/deps/libzenoh_collections-0a716b52d669721b.rmeta: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/single_or_vec.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/single_or_box_hashset.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/ring_buffer.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/stack_buffer.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/int_hash_map.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/single_or_vec.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/single_or_box_hashset.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/ring_buffer.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/stack_buffer.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zenoh-collections-1.6.2/src/int_hash_map.rs:

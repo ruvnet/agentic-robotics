@@ -1,0 +1,25 @@
+[package]
+name = "ros3-rt"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+ros3-core = { path = "../ros3-core" }
+tokio = { workspace = true }
+parking_lot = { workspace = true }
+crossbeam = { workspace = true }
+rayon = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+hdrhistogram = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+
+[[bench]]
+name = "latency"
+harness = false

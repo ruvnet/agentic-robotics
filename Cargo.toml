@@ -1,0 +1,68 @@
+[workspace]
+members = [
+    "crates/ros3-core",
+    "crates/ros3-rt",
+    "crates/ros3-mcp",
+    "crates/ros3-embedded",
+    "crates/ros3-node",
+]
+resolver = "2"
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+authors = ["ROS3 Team"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ruvnet/vibecast"
+
+[workspace.dependencies]
+# Middleware
+zenoh = "1.0"
+rustdds = "0.11"
+
+# Async runtime
+tokio = { version = "1.47", features = ["full", "rt-multi-thread", "time"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+cdr = "0.2"
+rkyv = "0.8"
+
+# Concurrency
+crossbeam = "0.8"
+rayon = "1.10"
+parking_lot = "0.12"
+
+# Performance
+hdrhistogram = "7.5"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# SIMD
+wide = "0.7"
+
+# Math/Robotics
+nalgebra = "0.33"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# NAPI
+napi = { version = "3.0", features = ["async", "tokio_rt", "napi8"] }
+napi-derive = "3.0"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.bench]
+inherits = "release"
+debug = true

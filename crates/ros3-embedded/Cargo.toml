@@ -1,0 +1,22 @@
+[package]
+name = "ros3-embedded"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+ros3-core = { path = "../ros3-core" }
+serde = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Embedded-specific dependencies (optional for non-embedded builds)
+# embassy-executor = { version = "0.7", optional = true }
+# rtic = { version = "2.1", optional = true }
+
+[features]
+default = []
+embassy = []
+rtic = []
