@@ -5,6 +5,7 @@ members = [
     "crates/ros3-mcp",
     "crates/ros3-embedded",
     "crates/ros3-node",
+    "crates/ros3-benchmarks",
 ]
 resolver = "2"
 

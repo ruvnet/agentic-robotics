@@ -2678,6 +2678,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ros3-benchmarks"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "ros3-core",
+ "ros3-rt",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "ros3-core"
 version = "1.0.0"
 dependencies = [
