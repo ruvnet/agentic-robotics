@@ -20,6 +20,93 @@ dependencies = [
 ]
 
 [[package]]
+name = "agentic-robotics-benchmarks"
+version = "0.1.0"
+dependencies = [
+ "agentic-robotics-core",
+ "agentic-robotics-rt",
+ "criterion",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "agentic-robotics-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "cdr",
+ "criterion",
+ "crossbeam",
+ "hdrhistogram",
+ "parking_lot",
+ "rkyv",
+ "rustdds",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.17",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "zenoh",
+]
+
+[[package]]
+name = "agentic-robotics-embedded"
+version = "0.1.0"
+dependencies = [
+ "agentic-robotics-core",
+ "anyhow",
+ "serde",
+ "thiserror 2.0.17",
+]
+
+[[package]]
+name = "agentic-robotics-mcp"
+version = "0.1.0"
+dependencies = [
+ "agentic-robotics-core",
+ "anyhow",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.17",
+ "tokio",
+ "tokio-test",
+ "tracing",
+]
+
+[[package]]
+name = "agentic-robotics-node"
+version = "0.1.0"
+dependencies = [
+ "agentic-robotics-core",
+ "anyhow",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "agentic-robotics-rt"
+version = "0.1.0"
+dependencies = [
+ "agentic-robotics-core",
+ "anyhow",
+ "criterion",
+ "crossbeam",
+ "hdrhistogram",
+ "parking_lot",
+ "rayon",
+ "thiserror 2.0.17",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "ahash"
 version = "0.8.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2675,93 +2762,6 @@ dependencies = [
  "serde",
  "serde_derive",
  "unicode-ident",
-]
-
-[[package]]
-name = "ros3-benchmarks"
-version = "0.1.0"
-dependencies = [
- "criterion",
- "ros3-core",
- "ros3-rt",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "ros3-core"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "cdr",
- "criterion",
- "crossbeam",
- "hdrhistogram",
- "parking_lot",
- "rkyv",
- "rustdds",
- "serde",
- "serde_json",
- "thiserror 2.0.17",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "zenoh",
-]
-
-[[package]]
-name = "ros3-embedded"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "ros3-core",
- "serde",
- "thiserror 2.0.17",
-]
-
-[[package]]
-name = "ros3-mcp"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "ros3-core",
- "serde",
- "serde_json",
- "thiserror 2.0.17",
- "tokio",
- "tokio-test",
- "tracing",
-]
-
-[[package]]
-name = "ros3-node"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "napi",
- "napi-build",
- "napi-derive",
- "ros3-core",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "ros3-rt"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "criterion",
- "crossbeam",
- "hdrhistogram",
- "parking_lot",
- "rayon",
- "ros3-core",
- "thiserror 2.0.17",
- "tokio",
- "tracing",
 ]
 
 [[package]]

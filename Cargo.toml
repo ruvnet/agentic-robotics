@@ -1,20 +1,26 @@
 [workspace]
 members = [
-    "crates/ros3-core",
-    "crates/ros3-rt",
-    "crates/ros3-mcp",
-    "crates/ros3-embedded",
-    "crates/ros3-node",
-    "crates/ros3-benchmarks",
+    "crates/agentic-robotics-core",
+    "crates/agentic-robotics-rt",
+    "crates/agentic-robotics-mcp",
+    "crates/agentic-robotics-embedded",
+    "crates/agentic-robotics-node",
+    "crates/agentic-robotics-benchmarks",
 ]
 resolver = "2"
 
 [workspace.package]
-version = "1.0.0"
+version = "0.1.0"
 edition = "2021"
-authors = ["ROS3 Team"]
+authors = ["ruv <hello@ruv.io>"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/ruvnet/vibecast"
+homepage = "https://ruv.io"
+documentation = "https://docs.rs/agentic-robotics"
+description = "High-performance agentic robotics framework with ROS2 compatibility"
+keywords = ["robotics", "ros", "ros2", "middleware", "agents"]
+categories = ["embedded", "asynchronous", "network-programming"]
+readme = "README.md"
 
 [workspace.dependencies]
 # Middleware

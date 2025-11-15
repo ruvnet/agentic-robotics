@@ -1,16 +1,21 @@
 [package]
-name = "ros3-node"
+name = "agentic-robotics-node"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-ros3-core = { path = "../ros3-core" }
+agentic-robotics-core = { path = "../agentic-robotics-core", version = "0.1.0" }
 napi = { workspace = true }
 napi-derive = { workspace = true }
 tokio = { workspace = true }

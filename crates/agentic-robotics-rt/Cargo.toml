@@ -1,13 +1,18 @@
 [package]
-name = "ros3-rt"
+name = "agentic-robotics-rt"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [dependencies]
-ros3-core = { path = "../ros3-core" }
+agentic-robotics-core = { path = "../agentic-robotics-core", version = "0.1.0" }
 tokio = { workspace = true }
 parking_lot = { workspace = true }
 crossbeam = { workspace = true }

@@ -1,10 +1,15 @@
 [package]
-name = "ros3-core"
+name = "agentic-robotics-core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [dependencies]
 zenoh = { workspace = true }
