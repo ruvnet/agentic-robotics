@@ -14,6 +14,13 @@ pub trait Message: Serialize + for<'de> Deserialize<'de> + Send + Sync + 'static
     }
 }
 
+/// Implement Message for serde_json::Value for generic JSON messages
+impl Message for serde_json::Value {
+    fn type_name() -> &'static str {
+        "std_msgs/Json"
+    }
+}
+
 /// Robot state message
 #[derive(Debug, Clone, Serialize, Deserialize, Archive, RkyvSerialize, RkyvDeserialize)]
 pub struct RobotState {
