@@ -507,6 +507,50 @@ match timeout(Duration::from_millis(100), subscriber.recv()).await {
 
 ---
 
+## 🤖 AI Integration: Model Context Protocol (MCP)
+
+Want to control your robots with AI assistants like Claude? Check out **[agentic-robotics-mcp](https://crates.io/crates/agentic-robotics-mcp)** - our MCP server implementation that lets AI assistants interact with your robots through natural language.
+
+```rust
+use agentic_robotics_mcp::{McpServer, tool, text_response};
+
+// Create an MCP server for your robot
+let mut server = McpServer::new("robot-controller", "1.0.0");
+
+// Register robot control tools
+server.register_tool(
+    "move_robot",
+    "Move the robot to a target position",
+    tool(|params| {
+        // Extract position from params
+        let x = params["x"].as_f64().unwrap();
+        let y = params["y"].as_f64().unwrap();
+
+        // Control your robot
+        move_to_position(x, y).await?;
+
+        Ok(text_response(format!("Moved to ({}, {})", x, y)))
+    })
+);
+
+// Run STDIO transport (for Claude Desktop)
+let transport = StdioTransport::new(server);
+transport.run().await?;
+```
+
+**Use cases:**
+- 🗣️ **Voice-controlled robots** - "Claude, move the robot to the charging station"
+- 📊 **Data analysis** - "What's the robot's battery level trend this week?"
+- 🐛 **Debugging** - "Why did the robot stop at position (5, 3)?"
+- 📝 **Task planning** - "Create a patrol route for the security robot"
+
+**Learn more:**
+- [MCP Crate Documentation](https://docs.rs/agentic-robotics-mcp)
+- [MCP Quick Start Guide](../agentic-robotics-mcp/README.md)
+- [Model Context Protocol](https://modelcontextprotocol.io)
+
+---
+
 ## 🌉 Bridging with ROS2
 
 You can run agentic-robotics and ROS2 nodes **side-by-side**:
@@ -720,6 +764,11 @@ at your option.
 - **Performance Report**: [PERFORMANCE_REPORT.md](../../PERFORMANCE_REPORT.md)
 - **Optimization Guide**: [OPTIMIZATIONS.md](../../OPTIMIZATIONS.md)
 - **Examples**: [examples/](../../examples)
+
+**Ecosystem Crates:**
+- **[agentic-robotics-mcp](https://crates.io/crates/agentic-robotics-mcp)** - AI assistant integration via Model Context Protocol
+- **[agentic-robotics-rt](https://crates.io/crates/agentic-robotics-rt)** - Runtime and execution environment
+- **[agentic-robotics-node](https://crates.io/crates/agentic-robotics-node)** - Node.js bindings for TypeScript/JavaScript
 
 ---
 
