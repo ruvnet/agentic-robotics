@@ -10,6 +10,7 @@ documentation.workspace = true
 description.workspace = true
 keywords.workspace = true
 categories.workspace = true
+readme = "README.md"
 
 [dependencies]
 zenoh = { workspace = true }

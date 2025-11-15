@@ -10,12 +10,13 @@ documentation.workspace = true
 description.workspace = true
 keywords.workspace = true
 categories.workspace = true
+readme = "README.md"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-agentic-robotics-core = { path = "../agentic-robotics-core", version = "0.1.0" }
+agentic-robotics-core = { path = "../agentic-robotics-core", version = "0.1.1" }
 napi = { workspace = true }
 napi-derive = { workspace = true }
 tokio = { workspace = true }

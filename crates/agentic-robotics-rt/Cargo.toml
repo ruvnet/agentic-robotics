@@ -10,9 +10,10 @@ documentation.workspace = true
 description.workspace = true
 keywords.workspace = true
 categories.workspace = true
+readme = "README.md"
 
 [dependencies]
-agentic-robotics-core = { path = "../agentic-robotics-core", version = "0.1.0" }
+agentic-robotics-core = { path = "../agentic-robotics-core", version = "0.1.1" }
 tokio = { workspace = true }
 parking_lot = { workspace = true }
 crossbeam = { workspace = true }
