@@ -12,17 +12,24 @@
     "build": "tsc",
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js",
-    "test": "vitest"
+    "test": "vitest",
+    "benchmark": "tsx src/benchmark.ts",
+    "benchmark:quick": "tsx src/benchmark.ts --quick",
+    "benchmark:optimized": "tsx src/optimized-benchmark.ts",
+    "benchmark:hybrid": "tsx src/hybrid-benchmark.ts",
+    "optimize": "tsx src/optimize.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "@types/better-sqlite3": "^7.6.13",
     "agentdb": "^1.6.1",
-    "agentic-flow": "^1.9.0"
+    "agentic-flow": "^1.10.2",
+    "better-sqlite3": "^12.4.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
     "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
     "vitest": "^2.1.0"
   }
 }
