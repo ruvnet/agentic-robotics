@@ -32,5 +32,6 @@
     "@agentic-robotics/linux-arm64-gnu": "0.1.3",
     "@agentic-robotics/darwin-x64": "0.1.3",
     "@agentic-robotics/darwin-arm64": "0.1.3"
-  }
+  },
+  "homepage": "https://ruv.io"
 }
