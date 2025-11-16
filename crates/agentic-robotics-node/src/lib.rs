@@ -41,7 +41,11 @@ impl AgenticNode {
     /// Create a publisher for a topic
     #[napi]
     pub async fn create_publisher(&self, topic: String) -> Result<AgenticPublisher> {
-        let publisher = Arc::new(Publisher::<JsonValue>::new(topic.clone()));
+        // Use JSON format for serde_json::Value to avoid CDR serialization issues
+        let publisher = Arc::new(Publisher::<JsonValue>::with_format(
+            topic.clone(),
+            agentic_robotics_core::serialization::Format::Json,
+        ));
 
         let mut publishers = self.publishers.write().await;
         publishers.insert(topic.clone(), publisher.clone());

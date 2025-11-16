@@ -1,11 +1,10 @@
 //! Publisher implementation
 
-use crate::error::{Error, Result};
+use crate::error::Result;
 use crate::message::Message;
 use crate::serialization::{Format, Serializer};
 use parking_lot::RwLock;
 use std::sync::Arc;
-use tracing::debug;
 
 /// Publisher for sending messages
 pub struct Publisher<T: Message> {
@@ -30,7 +29,6 @@ impl<T: Message> Publisher<T> {
     /// Create a new publisher with specific format
     pub fn with_format(topic: impl Into<String>, format: Format) -> Self {
         let topic = topic.into();
-        debug!("Creating publisher for topic: {}", topic);
 
         Self {
             topic,
@@ -50,12 +48,6 @@ impl<T: Message> Publisher<T> {
             stats.messages_sent += 1;
             stats.bytes_sent += bytes.len() as u64;
         }
-
-        debug!(
-            "Published message to {} ({} bytes)",
-            self.topic,
-            bytes.len()
-        );
 
         // In real implementation, this would send via Zenoh
         Ok(())
