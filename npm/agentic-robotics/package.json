@@ -1,6 +1,6 @@
 {
   "name": "agentic-robotics",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "High-performance agentic robotics framework with ROS2 compatibility - Complete toolkit",
   "repository": {
     "type": "git",

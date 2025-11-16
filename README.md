@@ -81,19 +81,21 @@ Agentic Robotics provides a modular architecture—use what you need:
 
 ### Core Packages
 
-| Package | Purpose | Size | Install |
-|---------|---------|------|---------|
-| **agentic-robotics** | Meta-package (everything) | 4.2 KB | `npm install agentic-robotics` |
-| **@agentic-robotics/core** | Node.js bindings | 5.3 KB | `npm install @agentic-robotics/core` |
-| **@agentic-robotics/cli** | Command-line tools | 2.2 KB | `npm install @agentic-robotics/cli` |
-| **@agentic-robotics/mcp** | MCP server (21 AI tools) | 26.1 KB | `npm install @agentic-robotics/mcp` |
+| Package | Purpose | Size | npm | Install |
+|---------|---------|------|-----|---------|
+| **[agentic-robotics](https://www.npmjs.com/package/agentic-robotics)** | Meta-package (everything) | 12.6 KB | [![npm](https://img.shields.io/npm/v/agentic-robotics)](https://www.npmjs.com/package/agentic-robotics) | `npm install agentic-robotics` |
+| **[@agentic-robotics/core](https://www.npmjs.com/package/@agentic-robotics/core)** | Node.js bindings | 5.3 KB | [![npm](https://img.shields.io/npm/v/@agentic-robotics/core)](https://www.npmjs.com/package/@agentic-robotics/core) | `npm install @agentic-robotics/core` |
+| **[@agentic-robotics/cli](https://www.npmjs.com/package/@agentic-robotics/cli)** | Command-line tools | 2.2 KB | [![npm](https://img.shields.io/npm/v/@agentic-robotics/cli)](https://www.npmjs.com/package/@agentic-robotics/cli) | `npm install @agentic-robotics/cli` |
+| **[@agentic-robotics/mcp](https://www.npmjs.com/package/@agentic-robotics/mcp)** | MCP server (21 AI tools) | 26.1 KB | [![npm](https://img.shields.io/npm/v/@agentic-robotics/mcp)](https://www.npmjs.com/package/@agentic-robotics/mcp) | `npm install @agentic-robotics/mcp` |
 
 ### Platform Binaries (Auto-installed)
 
-- `@agentic-robotics/linux-x64-gnu` - Linux x64 (Ubuntu, Debian, CentOS, Fedora)
-- `@agentic-robotics/linux-arm64-gnu` - Linux ARM64 (Raspberry Pi, Jetson) *coming soon*
-- `@agentic-robotics/darwin-x64` - macOS Intel *coming soon*
-- `@agentic-robotics/darwin-arm64` - macOS Apple Silicon *coming soon*
+| Package | Platform | npm | Status |
+|---------|----------|-----|--------|
+| **[@agentic-robotics/linux-x64-gnu](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu)** | Linux x64 (Ubuntu, Debian, CentOS, Fedora) | [![npm](https://img.shields.io/npm/v/@agentic-robotics/linux-x64-gnu)](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu) | ✅ Published |
+| **@agentic-robotics/linux-arm64-gnu** | Linux ARM64 (Raspberry Pi, Jetson) | - | 🚧 Coming soon |
+| **@agentic-robotics/darwin-x64** | macOS Intel | - | 🚧 Coming soon |
+| **@agentic-robotics/darwin-arm64** | macOS Apple Silicon | - | 🚧 Coming soon |
 
 ### Rust Crates (For Advanced Users)
 
