@@ -13,7 +13,7 @@ import type { Episode, Memory } from './memory.js';
 const execAsync = promisify(exec);
 
 export class HybridAgentDBMemory {
-  private db: Database.Database;
+  private db!: Database.Database;
   private dbPath: string;
   private initialized: boolean = false;
   private performanceMetrics: {
@@ -363,7 +363,7 @@ export class HybridAgentDBMemory {
         COUNT(DISTINCT task_name) as unique_tasks,
         AVG(confidence) as avg_confidence
       FROM reflexion_episodes
-    `).get();
+    `).get() || {};
 
     return {
       ...stats,
