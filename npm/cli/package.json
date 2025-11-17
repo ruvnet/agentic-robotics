@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/cli",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "CLI tools for agentic robotics framework",
   "bin": {
     "agentic-robotics": "./bin/cli.js"
