@@ -1,0 +1,8 @@
+# Ignore generated data files but preserve directory structure
+*.json
+*.md
+*.log
+*.db
+
+# Except .gitkeep files
+!.gitkeep
