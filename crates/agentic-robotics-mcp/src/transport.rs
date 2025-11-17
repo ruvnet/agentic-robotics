@@ -1,6 +1,6 @@
 //! MCP Transport implementations (stdio and SSE)
 
-use crate::{McpRequest, McpResponse, McpServer};
+use crate::{McpRequest, McpServer};
 use anyhow::Result;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 

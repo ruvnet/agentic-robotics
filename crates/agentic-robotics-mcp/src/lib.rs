@@ -3,7 +3,7 @@
 //! Provides MCP 2025-11 compliant server with stdio and SSE transports
 //! for exposing robot capabilities to AI assistants.
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;

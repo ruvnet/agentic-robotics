@@ -1,0 +1,86 @@
+{
+  "swarm_review": {
+    "name": "agentic-robotics-deep-review",
+    "description": "Comprehensive swarm-based review of agentic-robotics packages",
+    "model": "deepseek/deepseek-r1-0528:free",
+    "provider": "openrouter",
+    "review_groups": [
+      {
+        "group": "core-robotics",
+        "description": "Review core robotics functionality",
+        "targets": [
+          "crates/agentic-robotics-core",
+          "crates/agentic-robotics-node"
+        ],
+        "focus": [
+          "Pub/sub message passing efficiency",
+          "Serialization performance (JSON, CDR)",
+          "Memory management and zero-copy patterns",
+          "Thread safety and concurrency",
+          "API ergonomics and type safety"
+        ]
+      },
+      {
+        "group": "ai-ml-integration",
+        "description": "Review AI/ML and MCP integration",
+        "targets": [
+          "crates/agentic-robotics-mcp",
+          "npm/mcp/src"
+        ],
+        "focus": [
+          "MCP tool implementations",
+          "AgentDB integration and memory efficiency",
+          "Agentic-flow orchestration",
+          "AI agent communication patterns",
+          "Error handling in AI pipelines"
+        ]
+      },
+      {
+        "group": "communication-networking",
+        "description": "Review communication protocols",
+        "targets": [
+          "crates/agentic-robotics-core/src/transport",
+          "crates/agentic-robotics-core/src/publisher.rs",
+          "crates/agentic-robotics-core/src/subscriber.rs"
+        ],
+        "focus": [
+          "Zenoh middleware integration",
+          "DDS/CDR serialization",
+          "ROS2 compatibility",
+          "Network latency optimization",
+          "Transport layer reliability"
+        ]
+      },
+      {
+        "group": "realtime-embedded",
+        "description": "Review real-time and embedded systems",
+        "targets": [
+          "crates/agentic-robotics-rt",
+          "crates/agentic-robotics-embedded"
+        ],
+        "focus": [
+          "Real-time executor performance",
+          "Deterministic scheduling",
+          "Embedded systems compatibility",
+          "Resource constraints handling",
+          "Interrupt-safe operations"
+        ]
+      },
+      {
+        "group": "safety-testing",
+        "description": "Review safety, error handling, and testing",
+        "targets": [
+          "crates/agentic-robotics-benchmarks",
+          "npm/core/test.js"
+        ],
+        "focus": [
+          "Error handling patterns",
+          "Unsafe code usage and soundness",
+          "Test coverage and quality",
+          "Performance benchmarks",
+          "Memory safety and leak detection"
+        ]
+      }
+    ]
+  }
+}
