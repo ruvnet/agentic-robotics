@@ -1,0 +1,76 @@
+{
+  "name": "Agentic Robotics - Self-Learning Optimization System",
+  "version": "1.0.0",
+  "hooks": {
+    "pre_execution": {
+      "enabled": true,
+      "script": "node .claude/hooks/pre-execution.js",
+      "description": "Validate environment, load memory bank, initialize metrics collection"
+    },
+    "post_execution": {
+      "enabled": true,
+      "script": "node .claude/hooks/post-execution.js",
+      "description": "Store results in memory bank, consolidate learnings, update optimization metrics"
+    },
+    "optimization_loop": {
+      "enabled": true,
+      "script": "node .claude/hooks/optimization-loop.js",
+      "description": "Continuous optimization feedback loop with swarm intelligence"
+    }
+  },
+  "memory_bank": {
+    "enabled": true,
+    "path": "./examples/data/memory-bank.db",
+    "max_entries": 10000,
+    "consolidation_interval": 100,
+    "retention_policy": {
+      "successful_runs": "keep_all",
+      "failed_runs": "keep_for_analysis",
+      "optimization_data": "aggregate_and_compress"
+    }
+  },
+  "swarm_config": {
+    "parallel_execution": true,
+    "max_concurrent_swarms": 8,
+    "optimization_strategy": "multi_objective",
+    "exploration_rate": 0.3,
+    "exploitation_rate": 0.7,
+    "adaptive_learning": true
+  },
+  "openrouter": {
+    "enabled": true,
+    "models": {
+      "optimization": "deepseek/deepseek-r1-0528:free",
+      "benchmarking": "anthropic/claude-sonnet-4-5",
+      "exploration": "google/gemini-2.0-flash-thinking-exp:free",
+      "validation": "openai/gpt-4-turbo-preview"
+    },
+    "provider": "openrouter",
+    "timeout": 120000
+  },
+  "metrics": {
+    "track_performance": true,
+    "track_accuracy": true,
+    "track_efficiency": true,
+    "track_learning_curves": true,
+    "track_convergence": true,
+    "export_format": ["json", "csv", "markdown"],
+    "real_time_visualization": true
+  },
+  "benchmarking": {
+    "enabled": true,
+    "baseline_metrics": true,
+    "comparative_analysis": true,
+    "regression_detection": true,
+    "performance_thresholds": {
+      "min_success_rate": 0.8,
+      "max_execution_time_ms": 5000,
+      "min_improvement_rate": 0.05
+    }
+  },
+  "validation": {
+    "pre_execution": ["environment", "dependencies", "memory_bank", "models"],
+    "during_execution": ["metrics", "thresholds", "resource_usage"],
+    "post_execution": ["results", "consistency", "improvements", "regression"]
+  }
+}
