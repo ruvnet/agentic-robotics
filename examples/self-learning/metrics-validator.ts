@@ -104,9 +104,10 @@ class MetricsValidator {
       // Validate hooks configuration
       if (settings.hooks) {
         for (const [hookName, hookConfig] of Object.entries(settings.hooks as any)) {
-          if (!hookConfig.enabled) {
+          const config = hookConfig as { enabled?: boolean; script?: string };
+          if (!config.enabled) {
             this.addResult('settings', 'warning', `Hook ${hookName} is disabled`);
-          } else if (!hookConfig.script) {
+          } else if (!config.script) {
             this.addResult('settings', 'fail', `Hook ${hookName} has no script defined`);
           } else {
             this.addResult('settings', 'pass', `Hook ${hookName} configured`);
@@ -207,7 +208,7 @@ class MetricsValidator {
 
   private async testHook(hookPath: string): Promise<any> {
     return new Promise((resolve) => {
-      const process = spawn('node', [hookPath], {
+      const childProcess = spawn('node', [hookPath], {
         timeout: 10000, // 10 second timeout
         env: {
           ...process.env,
@@ -218,15 +219,15 @@ class MetricsValidator {
       let output = '';
       let errorOutput = '';
 
-      process.stdout?.on('data', (data) => {
+      childProcess.stdout?.on('data', (data: Buffer) => {
         output += data.toString();
       });
 
-      process.stderr?.on('data', (data) => {
+      childProcess.stderr?.on('data', (data: Buffer) => {
         errorOutput += data.toString();
       });
 
-      process.on('close', (code) => {
+      childProcess.on('close', (code: number | null) => {
         resolve({
           success: code === 0,
           exitCode: code,
@@ -236,7 +237,7 @@ class MetricsValidator {
         });
       });
 
-      process.on('error', (error) => {
+      childProcess.on('error', (error: Error) => {
         resolve({
           success: false,
           error: error.message,

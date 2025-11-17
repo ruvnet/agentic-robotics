@@ -1,0 +1,467 @@
+{
+  "config": {
+    "name": "Test Optimization",
+    "parameters": {
+      "speed": 0.5,
+      "lookAhead": 0.5
+    },
+    "constraints": {
+      "speed": [
+        0.1,
+        2
+      ],
+      "lookAhead": [
+        0.1,
+        3
+      ]
+    }
+  },
+  "swarmSize": 6,
+  "iterations": 5,
+  "globalBestScore": 0.9005969920762043,
+  "globalBestPosition": {
+    "speed": 1.2709134678927434,
+    "lookAhead": 0.12104292547269303
+  },
+  "results": [
+    {
+      "configId": "config-1763352758912-0.7565173393074502",
+      "parameters": {
+        "speed": 1.2229469164576214,
+        "lookAhead": 0.11101007680379893
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.8217284021258928,
+        "efficiency": 0.7717284021258929,
+        "accuracy": 0.7217284021258928
+      },
+      "score": 0.7841895620326916
+    },
+    {
+      "configId": "config-1763352758912-0.5358463896118231",
+      "parameters": {
+        "speed": 1.2082861088941703,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.13804326683714174,
+        "efficiency": 0.08804326683714175,
+        "accuracy": 0.03804326683714175
+      },
+      "score": 0.17613068660917058
+    },
+    {
+      "configId": "config-1763352758912-0.9466818208964392",
+      "parameters": {
+        "speed": 1.365407412966559,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.08899328565295934,
+        "efficiency": 0.038993285652959335,
+        "accuracy": 0
+      },
+      "score": 0.13450692127406472
+    },
+    {
+      "configId": "config-1763352758912-0.9302540684638374",
+      "parameters": {
+        "speed": 1.078795247556998,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.10947294409431114,
+        "efficiency": 0.05947294409431114,
+        "accuracy": 0.009472944094311141
+      },
+      "score": 0.13842243674536153
+    },
+    {
+      "configId": "config-1763352758912-0.40885394311844325",
+      "parameters": {
+        "speed": 1.0032858366010906,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.4253000534515933,
+        "efficiency": 0.3753000534515933,
+        "accuracy": 0.3253000534515933
+      },
+      "score": 0.43485653265232194
+    },
+    {
+      "configId": "config-1763352758912-0.2695417965226172",
+      "parameters": {
+        "speed": 1.4672615078034732,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.23103570813711866,
+        "efficiency": 0.18103570813711867,
+        "accuracy": 0.13103570813711865
+      },
+      "score": 0.2624174575689191
+    },
+    {
+      "configId": "config-1763352759012-0.6441934886301666",
+      "parameters": {
+        "speed": 1.2229469164576214,
+        "lookAhead": 0.11101007680379893
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.7321198867845786,
+        "efficiency": 0.6821198867845787,
+        "accuracy": 0.6321198867845786
+      },
+      "score": 0.7114356453179517
+    },
+    {
+      "configId": "config-1763352759012-0.8096915907186719",
+      "parameters": {
+        "speed": 1.2082861088941703,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.12150147349871873,
+        "efficiency": 0.07150147349871873,
+        "accuracy": 0.021501473498718723
+      },
+      "score": 0.1617131192075188
+    },
+    {
+      "configId": "config-1763352759012-0.879771167968965",
+      "parameters": {
+        "speed": 1.365407412966559,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.058345027011011935,
+        "efficiency": 0.008345027011011932,
+        "accuracy": 0
+      },
+      "score": 0.10573569597101434
+    },
+    {
+      "configId": "config-1763352759012-0.5081413657725633",
+      "parameters": {
+        "speed": 1.078795247556998,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.12505349176200603,
+        "efficiency": 0.07505349176200604,
+        "accuracy": 0.025053491762006032
+      },
+      "score": 0.15582244541345727
+    },
+    {
+      "configId": "config-1763352759012-0.35564927714700345",
+      "parameters": {
+        "speed": 1.0032858366010906,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.7997351197790121,
+        "efficiency": 0.7497351197790122,
+        "accuracy": 0.6997351197790121
+      },
+      "score": 0.7676369322326784
+    },
+    {
+      "configId": "config-1763352759012-0.6321838758761416",
+      "parameters": {
+        "speed": 1.4672615078034732,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.6670888969841872,
+        "efficiency": 0.6170888969841872,
+        "accuracy": 0.5670888969841872
+      },
+      "score": 0.6517142446197068
+    },
+    {
+      "configId": "config-1763352759113-0.08117214475209455",
+      "parameters": {
+        "speed": 1.2229469164576214,
+        "lookAhead": 0.11101007680379893
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.8310443500597889,
+        "efficiency": 0.781044350059789,
+        "accuracy": 0.731044350059789
+      },
+      "score": 0.785701518674024
+    },
+    {
+      "configId": "config-1763352759113-0.8133514284647108",
+      "parameters": {
+        "speed": 1.2082861088941703,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.14695596903239694,
+        "efficiency": 0.09695596903239695,
+        "accuracy": 0.04695596903239694
+      },
+      "score": 0.17851893008704406
+    },
+    {
+      "configId": "config-1763352759113-0.39087407308787747",
+      "parameters": {
+        "speed": 1.365407412966559,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.1014915241776381,
+        "efficiency": 0.051491524177638096,
+        "accuracy": 0.0014915241776380901
+      },
+      "score": 0.13683759855032138
+    },
+    {
+      "configId": "config-1763352759113-0.8262530646086514",
+      "parameters": {
+        "speed": 1.078795247556998,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.3307870872912523,
+        "efficiency": 0.28078708729125224,
+        "accuracy": 0.23078708729125225
+      },
+      "score": 0.3363761011411671
+    },
+    {
+      "configId": "config-1763352759113-0.7525509463444735",
+      "parameters": {
+        "speed": 1.0032858366010906,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.79862144056011,
+        "efficiency": 0.74862144056011,
+        "accuracy": 0.69862144056011
+      },
+      "score": 0.7569114453703931
+    },
+    {
+      "configId": "config-1763352759113-0.05287912740581446",
+      "parameters": {
+        "speed": 1.4672615078034732,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.8283399740926352,
+        "efficiency": 0.7783399740926352,
+        "accuracy": 0.7283399740926352
+      },
+      "score": 0.7909888016472584
+    },
+    {
+      "configId": "config-1763352759215-0.8121759970797247",
+      "parameters": {
+        "speed": 1.2229469164576214,
+        "lookAhead": 0.11101007680379893
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.9155491585567515,
+        "efficiency": 0.8655491585567515,
+        "accuracy": 0.8155491585567515
+      },
+      "score": 0.8760776760196525
+    },
+    {
+      "configId": "config-1763352759215-0.045147413094926314",
+      "parameters": {
+        "speed": 1.2082861088941703,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.1503571889265422,
+        "efficiency": 0.10035718892654222,
+        "accuracy": 0.050357188926542215
+      },
+      "score": 0.1776542856434849
+    },
+    {
+      "configId": "config-1763352759215-0.9721266912242505",
+      "parameters": {
+        "speed": 1.365407412966559,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.17811249286656655,
+        "efficiency": 0.12811249286656654,
+        "accuracy": 0.07811249286656653
+      },
+      "score": 0.21261236765148897
+    },
+    {
+      "configId": "config-1763352759215-0.558005318500681",
+      "parameters": {
+        "speed": 1.078795247556998,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.828037587661644,
+        "efficiency": 0.7780375876616441,
+        "accuracy": 0.7280375876616441
+      },
+      "score": 0.798695462602
+    },
+    {
+      "configId": "config-1763352759215-0.9981423959449649",
+      "parameters": {
+        "speed": 1.0032858366010906,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.40785154236707344,
+        "efficiency": 0.3578515423670734,
+        "accuracy": 0.3078515423670734
+      },
+      "score": 0.4212106294097311
+    },
+    {
+      "configId": "config-1763352759215-0.07244921660461823",
+      "parameters": {
+        "speed": 1.4672615078034732,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.8935505184852901,
+        "efficiency": 0.8435505184852902,
+        "accuracy": 0.7935505184852901
+      },
+      "score": 0.8428077012390089
+    },
+    {
+      "configId": "config-1763352759316-0.6661759670529188",
+      "parameters": {
+        "speed": 1.2229469164576214,
+        "lookAhead": 0.11101007680379893
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.9472229141053979,
+        "efficiency": 0.897222914105398,
+        "accuracy": 0.847222914105398
+      },
+      "score": 0.9005969920762043
+    },
+    {
+      "configId": "config-1763352759316-0.7651180058903895",
+      "parameters": {
+        "speed": 1.2082861088941703,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.6787662429863457,
+        "efficiency": 0.6287662429863458,
+        "accuracy": 0.5787662429863457
+      },
+      "score": 0.6651077191540724
+    },
+    {
+      "configId": "config-1763352759316-0.7600440154325676",
+      "parameters": {
+        "speed": 1.365407412966559,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.4671924811532192,
+        "efficiency": 0.41719248115321916,
+        "accuracy": 0.3671924811532192
+      },
+      "score": 0.46362367632672863
+    },
+    {
+      "configId": "config-1763352759316-0.5539558042550916",
+      "parameters": {
+        "speed": 1.078795247556998,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.6833530826567448,
+        "efficiency": 0.6333530826567448,
+        "accuracy": 0.5833530826567448
+      },
+      "score": 0.6580060667415575
+    },
+    {
+      "configId": "config-1763352759316-0.414699351684817",
+      "parameters": {
+        "speed": 1.0032858366010906,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.8689144233505856,
+        "efficiency": 0.8189144233505856,
+        "accuracy": 0.7689144233505856
+      },
+      "score": 0.8278314830467548
+    },
+    {
+      "configId": "config-1763352759316-0.9194807524127178",
+      "parameters": {
+        "speed": 1.4672615078034732,
+        "lookAhead": 0.1
+      },
+      "metrics": {
+        "executionTime": 0,
+        "successRate": 0.7929507816003833,
+        "efficiency": 0.7429507816003834,
+        "accuracy": 0.6929507816003834
+      },
+      "score": 0.7547587419930359
+    }
+  ],
+  "timestamp": "2025-11-17T04:12:39.416Z",
+  "statistics": {
+    "score": {
+      "mean": 0.5022966292339596,
+      "min": 0.10573569597101434,
+      "max": 0.9005969920762043,
+      "std": 0.4905469779050017
+    },
+    "executionTime": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "successRate": {
+      "mean": 0.5055838772016298,
+      "min": 0.058345027011011935,
+      "max": 0.9472229141053979
+    }
+  }
+}

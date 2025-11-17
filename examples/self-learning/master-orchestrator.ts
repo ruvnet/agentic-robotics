@@ -129,7 +129,7 @@ class MasterOrchestrator {
       log(colors.bright + colors.cyan, '[PHASE]', `Starting: ${phase.name}`);
 
       const startTime = Date.now();
-      const process = spawn(phase.command, phase.args, {
+      const childProcess = spawn(phase.command, phase.args, {
         env: {
           ...process.env,
           ORCHESTRATION_SESSION: this.sessionId
@@ -140,19 +140,19 @@ class MasterOrchestrator {
       let output = '';
       let errorOutput = '';
 
-      process.stdout?.on('data', (data) => {
+      childProcess.stdout?.on('data', (data: Buffer) => {
         const text = data.toString();
         output += text;
         process.stdout.write(text);
       });
 
-      process.stderr?.on('data', (data) => {
+      childProcess.stderr?.on('data', (data: Buffer) => {
         const text = data.toString();
         errorOutput += text;
         process.stderr.write(text);
       });
 
-      process.on('close', (code) => {
+      childProcess.on('close', (code: number | null) => {
         const duration = Date.now() - startTime;
 
         const result = {
@@ -179,7 +179,7 @@ class MasterOrchestrator {
         }
       });
 
-      process.on('error', (error) => {
+      childProcess.on('error', (error: Error) => {
         log(colors.red, '[PHASE]', `✗ Error: ${phase.name} - ${error.message}`);
 
         if (phase.critical) {

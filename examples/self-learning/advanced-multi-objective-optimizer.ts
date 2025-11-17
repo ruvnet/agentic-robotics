@@ -7,7 +7,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-interface Individual {
+export interface Individual {
   id: string;
   genes: Record<string, number>;
   objectives: {
@@ -22,7 +22,7 @@ interface Individual {
   dominatedSolutions: Set<string>;
 }
 
-interface ParetoFront {
+export interface ParetoFront {
   rank: number;
   individuals: Individual[];
   hypervolume: number;

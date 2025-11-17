@@ -168,7 +168,7 @@ class ParallelSwarmExecutor extends EventEmitter {
           return;
       }
 
-      const process = spawn(script, args, {
+      const childProcess = spawn(script, args, {
         env: {
           ...process.env,
           ...task.config.env
@@ -179,15 +179,15 @@ class ParallelSwarmExecutor extends EventEmitter {
       let output = '';
       let errorOutput = '';
 
-      process.stdout?.on('data', (data) => {
+      childProcess.stdout?.on('data', (data: Buffer) => {
         output += data.toString();
       });
 
-      process.stderr?.on('data', (data) => {
+      childProcess.stderr?.on('data', (data: Buffer) => {
         errorOutput += data.toString();
       });
 
-      process.on('close', (code) => {
+      childProcess.on('close', (code: number | null) => {
         if (code === 0) {
           resolve({
             success: true,
@@ -199,7 +199,7 @@ class ParallelSwarmExecutor extends EventEmitter {
         }
       });
 
-      process.on('error', (error) => {
+      childProcess.on('error', (error: Error) => {
         reject(error);
       });
     });

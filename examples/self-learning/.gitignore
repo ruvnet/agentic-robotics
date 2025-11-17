@@ -1,0 +1,33 @@
+# NPM configuration (contains auth tokens)
+.npmrc
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Test output
+coverage/
+.vitest/
+
+# Generated data files
+examples/data/**/*.json
+examples/data/**/*.md
+examples/data/**/*.log
+
+# Environment files
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

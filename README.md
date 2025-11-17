@@ -105,6 +105,12 @@ Agentic Robotics provides a modular architecture—use what you need:
 - `agentic-robotics-embedded` - Embedded systems support (Embassy/RTIC)
 - `agentic-robotics-node` - NAPI-RS bindings for Node.js
 
+### Examples & Extensions
+
+| Package | Description | npm |
+|---------|-------------|-----|
+| **[@agentic-robotics/self-learning](https://www.npmjs.com/package/@agentic-robotics/self-learning)** | AI-powered self-learning optimization system with swarm intelligence, PSO, NSGA-II, evolutionary algorithms for autonomous robotics, multi-agent systems, and continuous learning | [![npm](https://img.shields.io/npm/v/@agentic-robotics/self-learning)](https://www.npmjs.com/package/@agentic-robotics/self-learning) |
+
 ---
 
 ## 🚀 Quick Start

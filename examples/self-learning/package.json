@@ -1,7 +1,7 @@
 {
   "name": "@agentic-robotics/self-learning",
   "version": "1.0.0",
-  "description": "Self-learning optimization system with swarm intelligence for robotic systems",
+  "description": "AI-powered self-learning optimization system with swarm intelligence, PSO, NSGA-II, evolutionary algorithms for autonomous robotics, multi-agent systems, and continuous learning",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,9 +22,10 @@
     "quick-start": "./quick-start.sh",
     "test": "vitest",
     "test:watch": "vitest watch",
+    "test:coverage": "vitest --coverage",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.{ts,json,md}\"",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && vitest run"
   },
   "keywords": [
     "robotics",
@@ -32,18 +33,52 @@
     "optimization",
     "swarm-intelligence",
     "machine-learning",
+    "artificial-intelligence",
     "particle-swarm-optimization",
+    "pso",
+    "nsga-ii",
+    "multi-objective-optimization",
     "evolutionary-algorithms",
-    "memory-bank",
+    "genetic-algorithms",
+    "autonomous-systems",
+    "autonomous-robots",
+    "adaptive-learning",
+    "reinforcement-learning",
+    "multi-agent-systems",
     "agentic-flow",
     "openrouter",
     "agentdb",
+    "memory-bank",
+    "continuous-learning",
+    "online-learning",
+    "meta-learning",
+    "transfer-learning",
+    "hyperparameter-optimization",
+    "automated-tuning",
+    "benchmark",
+    "performance-optimization",
+    "real-time-learning",
+    "navigation",
+    "path-planning",
+    "swarm-robotics",
+    "collective-intelligence",
     "mcp",
-    "autonomous-systems",
-    "multi-agent",
-    "benchmarking"
+    "model-context-protocol",
+    "typescript",
+    "cli",
+    "nodejs",
+    "ai-agents",
+    "deepseek",
+    "gemini",
+    "claude",
+    "gpt-4",
+    "pareto-optimal",
+    "trade-off-analysis"
   ],
-  "author": "Agentic Robotics Team",
+  "author": {
+    "name": "Agentic Robotics Team",
+    "url": "https://ruv.io/agentic-robotics"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -51,11 +86,13 @@
     "directory": "examples/self-learning"
   },
   "bugs": {
-    "url": "https://github.com/ruvnet/agentic-robotics/issues"
+    "url": "https://github.com/ruvnet/agentic-robotics/issues",
+    "email": "support@ruv.io"
   },
-  "homepage": "https://github.com/ruvnet/agentic-robotics#readme",
+  "homepage": "https://ruv.io/agentic-robotics",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
   "dependencies": {
     "agentdb": "^1.6.1",
@@ -72,6 +109,7 @@
     "typescript": "^5.7.0",
     "tsx": "^4.19.0",
     "vitest": "^2.1.0",
+    "@vitest/coverage-v8": "^2.1.0",
     "eslint": "^8.57.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
@@ -79,6 +117,11 @@
   },
   "peerDependencies": {
     "@agentic-robotics/core": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@agentic-robotics/core": {
+      "optional": true
+    }
   },
   "files": [
     "dist",
@@ -90,6 +133,11 @@
     "LICENSE"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/ruvnet"
   }
 }

@@ -39,7 +39,8 @@ const colors = {
   blue: '\x1b[34m',
   yellow: '\x1b[33m',
   red: '\x1b[31m',
-  cyan: '\x1b[36m'
+  cyan: '\x1b[36m',
+  gray: '\x1b[90m'
 };
 
 function log(color: string, prefix: string, message: string): void {

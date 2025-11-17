@@ -1,0 +1,90 @@
+{
+  "sessionId": "validation-1763352611336",
+  "timestamp": "2025-11-17T04:10:11.343Z",
+  "results": [
+    {
+      "component": "settings",
+      "status": "fail",
+      "message": "settings.json not found",
+      "timestamp": "2025-11-17T04:10:11.337Z"
+    },
+    {
+      "component": "hooks",
+      "status": "fail",
+      "message": "Hooks directory not found",
+      "timestamp": "2025-11-17T04:10:11.340Z"
+    },
+    {
+      "component": "memory-bank",
+      "status": "warning",
+      "message": "Memory bank not found (will be created on first run)",
+      "timestamp": "2025-11-17T04:10:11.340Z"
+    },
+    {
+      "component": "metrics",
+      "status": "pass",
+      "message": "Created metrics directory",
+      "timestamp": "2025-11-17T04:10:11.341Z"
+    },
+    {
+      "component": "directories",
+      "status": "pass",
+      "message": "Directory exists: ./examples/data",
+      "timestamp": "2025-11-17T04:10:11.341Z"
+    },
+    {
+      "component": "directories",
+      "status": "pass",
+      "message": "Directory exists: ./examples/data/metrics",
+      "timestamp": "2025-11-17T04:10:11.342Z"
+    },
+    {
+      "component": "directories",
+      "status": "pass",
+      "message": "Directory exists: ./examples/data/optimization",
+      "timestamp": "2025-11-17T04:10:11.342Z"
+    },
+    {
+      "component": "directories",
+      "status": "pass",
+      "message": "Directory exists: ./examples/data/benchmarks",
+      "timestamp": "2025-11-17T04:10:11.342Z"
+    },
+    {
+      "component": "directories",
+      "status": "pass",
+      "message": "Created directory: ./examples/data/navigation",
+      "timestamp": "2025-11-17T04:10:11.342Z"
+    },
+    {
+      "component": "directories",
+      "status": "pass",
+      "message": "Created directory: ./examples/data/parallel-swarms",
+      "timestamp": "2025-11-17T04:10:11.343Z"
+    },
+    {
+      "component": "dependencies",
+      "status": "pass",
+      "message": "agentdb installed: ^1.6.1",
+      "timestamp": "2025-11-17T04:10:11.343Z"
+    },
+    {
+      "component": "dependencies",
+      "status": "pass",
+      "message": "agentic-flow installed: ^1.9.0",
+      "timestamp": "2025-11-17T04:10:11.343Z"
+    },
+    {
+      "component": "dependencies",
+      "status": "pass",
+      "message": "@modelcontextprotocol/sdk installed: ^1.0.0",
+      "timestamp": "2025-11-17T04:10:11.343Z"
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "pass": 10,
+    "fail": 2,
+    "warning": 1
+  }
+}

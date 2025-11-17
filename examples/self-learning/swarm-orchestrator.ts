@@ -9,7 +9,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import * as readline from 'readline';
 
-interface SwarmConfig {
+export interface SwarmConfig {
   id: string;
   task: string;
   model: string;
@@ -18,7 +18,7 @@ interface SwarmConfig {
   priority: number;
 }
 
-interface SwarmResult {
+export interface SwarmResult {
   id: string;
   success: boolean;
   duration: number;
@@ -28,7 +28,7 @@ interface SwarmResult {
   error?: string;
 }
 
-interface OptimizationMetrics {
+export interface OptimizationMetrics {
   sessionId: string;
   timestamp: string;
   swarms: number;
@@ -177,7 +177,7 @@ class SelfLearningSwarmOrchestrator {
       const taskPrompt = this.buildMemoryAugmentedTask(config);
 
       // Spawn agentic-flow swarm agent
-      const process = spawn('npx', [
+      const childProcess = spawn('npx', [
         'agentic-flow',
         '--agent', 'optimizer',
         '--task', taskPrompt,
@@ -196,17 +196,17 @@ class SelfLearningSwarmOrchestrator {
       let output = '';
       let errorOutput = '';
 
-      process.stdout?.on('data', (data) => {
+      childProcess.stdout?.on('data', (data: Buffer) => {
         const text = data.toString();
         output += text;
       });
 
-      process.stderr?.on('data', (data) => {
+      childProcess.stderr?.on('data', (data: Buffer) => {
         const text = data.toString();
         errorOutput += text;
       });
 
-      process.on('close', (code) => {
+      childProcess.on('close', (code: number | null) => {
         const duration = Date.now() - startTime;
 
         if (code === 0) {
@@ -240,7 +240,7 @@ class SelfLearningSwarmOrchestrator {
         this.activeSwarms.delete(config.id);
       });
 
-      this.activeSwarms.set(config.id, process);
+      this.activeSwarms.set(config.id, childProcess);
     });
   }
 
