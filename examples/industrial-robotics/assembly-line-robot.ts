@@ -22,7 +22,7 @@ interface AssemblyTask {
   taskId: string;
   productId: string;
   components: Component[];
-  quality Criteria: {
+  qualityCriteria: {
     torqueMin: number;
     torqueMax: number;
     positionTolerance: number;
