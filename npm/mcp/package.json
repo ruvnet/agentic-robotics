@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/mcp",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Model Context Protocol server for agentic robotics with AgentDB integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,6 +27,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js",
     "test": "vitest",
@@ -34,7 +35,7 @@
     "benchmark:hybrid": "tsx src/hybrid-benchmark.ts"
   },
   "dependencies": {
-    "@agentic-robotics/core": "^0.1.3",
+    "@agentic-robotics/core": "^0.2.0",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "agentdb": "^1.6.1",
     "agentic-flow": "^1.10.2",

@@ -27,7 +27,7 @@ export interface EnhancedROS3McpServerConfig {
 export class EnhancedROS3McpServer {
   private ros3: ROS3Interface;
   private memory: EnhancedAgentDBMemory;
-  private orchestrator: FlowOrchestrator;
+  private orchestrator?: FlowOrchestrator;
   private name: string;
   private version: string;
   private config: EnhancedROS3McpServerConfig;

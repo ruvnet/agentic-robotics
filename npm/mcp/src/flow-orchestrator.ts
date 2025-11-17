@@ -1,15 +1,13 @@
 /**
- * Agentic Flow Orchestration Integration
+ * Agentic Flow Orchestration Integration - SECURE VERSION
  *
  * Integrates agentic-flow's 66 agents and 213 MCP tools for
  * multi-robot coordination and complex task execution
+ *
+ * SECURITY: All command execution uses secure spawn() with argument arrays
  */
 
 import { spawn } from 'child_process';
-import { promisify } from 'util';
-import { exec } from 'child_process';
-
-const execAsync = promisify(exec);
 
 export interface AgentTask {
   id: string;
@@ -47,12 +45,63 @@ export interface OrchestrationMetrics {
   toolUsage: Record<string, number>;
 }
 
+/**
+ * Secure helper to spawn commands with proper argument handling
+ */
+function spawnAsync(
+  command: string,
+  args: string[],
+  options: { timeout?: number } = {}
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      shell: false, // Critical: disable shell interpretation
+      timeout: options.timeout,
+    });
+
+    let stdout = '';
+    let stderr = '';
+
+    child.stdout?.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    child.stderr?.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    child.on('close', (code) => {
+      resolve({ stdout, stderr, code: code || 0 });
+    });
+
+    child.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
+/**
+ * Validate and sanitize task parameters
+ */
+function validateTaskParams(params: Record<string, any>): void {
+  // Check for command injection attempts
+  const paramStr = JSON.stringify(params);
+  if (paramStr.includes(';') || paramStr.includes('|') || paramStr.includes('&')) {
+    throw new Error('Invalid characters in task parameters');
+  }
+}
+
 export class FlowOrchestrator {
   private config: SwarmConfig;
   private metrics: OrchestrationMetrics;
   private initialized: boolean = false;
 
   constructor(config: SwarmConfig = {}) {
+    // Validate config
+    if (config.numAgents && (config.numAgents < 1 || config.numAgents > 200)) {
+      throw new Error('numAgents must be between 1 and 200');
+    }
+
     this.config = {
       numAgents: config.numAgents || 66,
       strategy: config.strategy || 'adaptive',
@@ -77,16 +126,13 @@ export class FlowOrchestrator {
     const startTime = Date.now();
 
     try {
-      // Initialize agentic-flow with configuration
-      const cmd = [
-        'npx agentic-flow init',
-        `--agents ${this.config.numAgents}`,
-        `--strategy ${this.config.strategy}`,
-        this.config.reasoningEnabled ? '--enable-reasoning' : '',
-        this.config.learningEnabled ? '--enable-learning' : '',
-      ].filter(Boolean).join(' ');
+      // Secure initialization with spawn
+      const args = ['agentic-flow', 'init', '--agents', this.config.numAgents!.toString(), '--strategy', this.config.strategy!];
 
-      await execAsync(cmd);
+      if (this.config.reasoningEnabled) args.push('--enable-reasoning');
+      if (this.config.learningEnabled) args.push('--enable-learning');
+
+      await spawnAsync('npx', args);
 
       const initTime = Date.now() - startTime;
       console.error(`🌊 Agentic Flow initialized (${this.config.numAgents} agents, ${initTime}ms)`);
@@ -97,29 +143,45 @@ export class FlowOrchestrator {
     }
   }
 
-  /**
-   * Execute a single task using agentic-flow orchestration
-   */
   async executeTask(task: AgentTask): Promise<AgentResult> {
+    if (!this.initialized) {
+      throw new Error('FlowOrchestrator not initialized. Call initialize() first.');
+    }
+
+    // Validate input
+    validateTaskParams(task.params);
+
     const startTime = Date.now();
     this.metrics.totalTasks++;
 
     try {
-      const cmd = [
-        'npx agentic-flow execute',
-        `--task-type "${task.type}"`,
-        `--priority ${task.priority}`,
-        `--params '${JSON.stringify(task.params)}'`,
-        task.timeout ? `--timeout ${task.timeout}` : '',
-        task.retries ? `--retries ${task.retries}` : '',
-        this.config.reasoningEnabled ? '--enable-reasoning' : '',
-        '--format json',
-      ].filter(Boolean).join(' ');
+      const args = [
+        'agentic-flow',
+        'execute',
+        '--task-type',
+        task.type,
+        '--priority',
+        task.priority,
+        '--params',
+        JSON.stringify(task.params),
+        '--format',
+        'json',
+      ];
 
-      const { stdout } = await execAsync(cmd, { timeout: task.timeout || 30000 });
+      if (task.timeout) args.push('--timeout', task.timeout.toString());
+      if (task.retries) args.push('--retries', task.retries.toString());
+      if (this.config.reasoningEnabled) args.push('--enable-reasoning');
+
+      const { stdout, code } = await spawnAsync('npx', args, {
+        timeout: task.timeout || 30000,
+      });
+
+      if (code !== 0) {
+        throw new Error(`Agentic-flow execution failed with code ${code}`);
+      }
 
       const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('{'));
+      const jsonLine = lines.find((line) => line.startsWith('{'));
 
       if (jsonLine) {
         const data = JSON.parse(jsonLine);
@@ -159,30 +221,41 @@ export class FlowOrchestrator {
     }
   }
 
-  /**
-   * Execute multiple tasks in parallel using swarm intelligence
-   */
   async executeSwarm(tasks: AgentTask[]): Promise<AgentResult[]> {
-    const startTime = Date.now();
+    if (!this.initialized) {
+      throw new Error('FlowOrchestrator not initialized. Call initialize() first.');
+    }
 
+    const startTime = Date.now();
     console.error(`🐝 Executing swarm with ${tasks.length} tasks`);
 
     try {
-      // Use agentic-flow's swarm coordination
-      const tasksJson = JSON.stringify(tasks);
-      const cmd = [
-        'npx agentic-flow swarm',
-        `--tasks '${tasksJson}'`,
-        `--strategy ${this.config.strategy}`,
-        `--num-agents ${this.config.numAgents}`,
-        this.config.reasoningEnabled ? '--enable-reasoning' : '',
-        '--format json',
-      ].filter(Boolean).join(' ');
+      // Validate all tasks
+      tasks.forEach((task) => validateTaskParams(task.params));
 
-      const { stdout } = await execAsync(cmd, { timeout: 60000 });
+      const args = [
+        'agentic-flow',
+        'swarm',
+        '--tasks',
+        JSON.stringify(tasks),
+        '--strategy',
+        this.config.strategy!,
+        '--num-agents',
+        this.config.numAgents!.toString(),
+        '--format',
+        'json',
+      ];
+
+      if (this.config.reasoningEnabled) args.push('--enable-reasoning');
+
+      const { stdout, code } = await spawnAsync('npx', args, { timeout: 60000 });
+
+      if (code !== 0) {
+        throw new Error(`Swarm execution failed with code ${code}`);
+      }
 
       const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('[') || line.startsWith('{'));
+      const jsonLine = lines.find((line) => line.startsWith('[') || line.startsWith('{'));
 
       if (jsonLine) {
         const data = JSON.parse(jsonLine);
@@ -206,8 +279,7 @@ export class FlowOrchestrator {
     } catch (error: any) {
       console.error(`❌ Swarm execution failed: ${error.message}`);
 
-      // Return individual failures
-      return tasks.map(task => ({
+      return tasks.map((task) => ({
         taskId: task.id,
         success: false,
         result: { error: error.message },
@@ -218,9 +290,6 @@ export class FlowOrchestrator {
     }
   }
 
-  /**
-   * Coordinate multiple robots using agentic-flow
-   */
   async coordinateRobots(
     robots: string[],
     mission: {
@@ -234,22 +303,38 @@ export class FlowOrchestrator {
     executionPlan: any;
     estimatedTime: number;
   }> {
+    if (!this.initialized) {
+      throw new Error('FlowOrchestrator not initialized. Call initialize() first.');
+    }
+
     const startTime = Date.now();
 
     try {
-      const cmd = [
-        'npx agentic-flow coordinate',
-        `--robots '${JSON.stringify(robots)}'`,
-        `--mission-type "${mission.type}"`,
-        `--objectives '${JSON.stringify(mission.objectives)}'`,
-        mission.constraints ? `--constraints '${JSON.stringify(mission.constraints)}'` : '',
-        '--format json',
-      ].filter(Boolean).join(' ');
+      const args = [
+        'agentic-flow',
+        'coordinate',
+        '--robots',
+        JSON.stringify(robots),
+        '--mission-type',
+        mission.type,
+        '--objectives',
+        JSON.stringify(mission.objectives),
+        '--format',
+        'json',
+      ];
 
-      const { stdout } = await execAsync(cmd, { timeout: 30000 });
+      if (mission.constraints) {
+        args.push('--constraints', JSON.stringify(mission.constraints));
+      }
+
+      const { stdout, code } = await spawnAsync('npx', args, { timeout: 30000 });
+
+      if (code !== 0) {
+        throw new Error(`Coordination failed with code ${code}`);
+      }
 
       const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('{'));
+      const jsonLine = lines.find((line) => line.startsWith('{'));
 
       if (jsonLine) {
         const data = JSON.parse(jsonLine);
@@ -267,20 +352,10 @@ export class FlowOrchestrator {
 
       throw new Error('No valid JSON response from coordination');
     } catch (error: any) {
-      console.error(`❌ Coordination failed: ${error.message}`);
-
-      return {
-        success: false,
-        assignments: {},
-        executionPlan: {},
-        estimatedTime: 0,
-      };
+      throw new Error(`Robot coordination failed: ${error.message}`);
     }
   }
 
-  /**
-   * Use ReasoningBank for complex decision making
-   */
   async reasonAboutTask(
     context: string,
     options: {
@@ -294,28 +369,28 @@ export class FlowOrchestrator {
     confidence: number;
     alternatives: string[];
   }> {
-    const startTime = Date.now();
+    if (!this.initialized) {
+      throw new Error('FlowOrchestrator not initialized. Call initialize() first.');
+    }
 
     try {
-      const cmd = [
-        'npx agentic-flow reason',
-        `--context "${context}"`,
-        options.useMemory ? '--use-memory' : '',
-        options.synthesizeStrategy ? '--synthesize-strategy' : '',
-        options.explainReasoning ? '--explain-reasoning' : '',
-        '--format json',
-      ].filter(Boolean).join(' ');
+      const args = ['agentic-flow', 'reason', '--context', context, '--format', 'json'];
 
-      const { stdout } = await execAsync(cmd, { timeout: 15000 });
+      if (options.useMemory) args.push('--use-memory');
+      if (options.synthesizeStrategy) args.push('--synthesize-strategy');
+      if (options.explainReasoning) args.push('--explain-reasoning');
+
+      const { stdout, code } = await spawnAsync('npx', args, { timeout: 15000 });
+
+      if (code !== 0) {
+        throw new Error(`Reasoning failed with code ${code}`);
+      }
 
       const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('{'));
+      const jsonLine = lines.find((line) => line.startsWith('{'));
 
       if (jsonLine) {
         const data = JSON.parse(jsonLine);
-
-        const reasonTime = Date.now() - startTime;
-        console.error(`🧠 Reasoning completed in ${reasonTime}ms`);
 
         return {
           decision: data.decision || '',
@@ -327,26 +402,25 @@ export class FlowOrchestrator {
 
       throw new Error('No valid JSON response from reasoning');
     } catch (error: any) {
-      console.error(`❌ Reasoning failed: ${error.message}`);
-
-      return {
-        decision: '',
-        reasoning: error.message,
-        confidence: 0,
-        alternatives: [],
-      };
+      throw new Error(`Reasoning failed: ${error.message}`);
     }
   }
 
-  /**
-   * Get available MCP tools from agentic-flow
-   */
   async getAvailableTools(): Promise<string[]> {
     try {
-      const { stdout } = await execAsync('npx agentic-flow list-tools --format json');
+      const { stdout, code } = await spawnAsync('npx', [
+        'agentic-flow',
+        'list-tools',
+        '--format',
+        'json',
+      ]);
+
+      if (code !== 0) {
+        throw new Error('Failed to list tools');
+      }
 
       const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('['));
+      const jsonLine = lines.find((line) => line.startsWith('['));
 
       if (jsonLine) {
         const tools = JSON.parse(jsonLine);
@@ -356,38 +430,27 @@ export class FlowOrchestrator {
 
       return [];
     } catch (error: any) {
-      console.error('⚠️ Could not list tools:', error.message);
-      return [];
+      throw new Error(`Failed to list tools: ${error.message}`);
     }
   }
 
-  /**
-   * Get metrics and statistics
-   */
   getMetrics(): OrchestrationMetrics {
     return {
       ...this.metrics,
-      avgExecutionTime: this.metrics.totalTasks > 0
-        ? this.metrics.avgExecutionTime / this.metrics.totalTasks
-        : 0,
+      avgExecutionTime:
+        this.metrics.totalTasks > 0 ? this.metrics.avgExecutionTime / this.metrics.totalTasks : 0,
     };
   }
 
-  /**
-   * Update internal metrics
-   */
   private updateMetrics(data: any, executionTime: number): void {
-    // Update execution time
     this.metrics.avgExecutionTime += executionTime;
 
-    // Track agent utilization
     if (data.agents_used) {
       for (const agent of data.agents_used) {
         this.metrics.agentUtilization[agent] = (this.metrics.agentUtilization[agent] || 0) + 1;
       }
     }
 
-    // Track tool usage
     if (data.tools_used) {
       for (const tool of data.tools_used) {
         this.metrics.toolUsage[tool] = (this.metrics.toolUsage[tool] || 0) + 1;
@@ -395,9 +458,6 @@ export class FlowOrchestrator {
     }
   }
 
-  /**
-   * Reset metrics
-   */
   resetMetrics(): void {
     this.metrics = {
       totalTasks: 0,

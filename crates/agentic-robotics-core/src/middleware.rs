@@ -2,10 +2,10 @@
 //!
 //! Provides pub/sub, RPC, and discovery with 4-6 byte wire overhead
 
-use crate::error::{Error, Result};
+use crate::error::Result;
 use parking_lot::RwLock;
 use std::sync::Arc;
-use tracing::{debug, info};
+use tracing::info;
 
 /// Zenoh session wrapper
 pub struct Zenoh {

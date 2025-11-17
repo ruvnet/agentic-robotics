@@ -2,7 +2,6 @@
 
 use crate::error::{Error, Result};
 use crate::message::Message;
-use crate::serialization::deserialize_cdr;
 use crossbeam::channel::{self, Receiver, Sender};
 use std::sync::Arc;
 use tracing::debug;

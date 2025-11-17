@@ -2,7 +2,6 @@
 //!
 //! Provides support for embedded systems using Embassy and RTIC
 
-use anyhow::Result;
 
 /// Embedded task priority
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

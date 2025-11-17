@@ -10,7 +10,6 @@ pub use executor::{ROS3Executor, Priority, Deadline};
 pub use scheduler::PriorityScheduler;
 pub use latency::LatencyTracker;
 
-use std::time::Duration;
 
 /// Real-time task priority levels
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
