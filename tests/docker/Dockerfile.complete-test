@@ -1,0 +1,19 @@
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+# Install the main package from npm registry
+RUN npm install -g agentic-robotics --verbose
+
+# Copy all test scripts
+COPY test-enhanced-cli.sh /app/
+COPY test-dialog-automated.sh /app/
+COPY test-mcp-server.sh /app/
+COPY test-complete.sh /app/
+
+# Make scripts executable
+RUN chmod +x /app/*.sh
+
+# Run complete test suite
+CMD ["./test-complete.sh"]

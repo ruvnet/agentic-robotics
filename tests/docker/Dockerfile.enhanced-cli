@@ -1,0 +1,16 @@
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+# Install the main package from npm registry
+RUN npm install -g agentic-robotics
+
+# Copy test script
+COPY test-enhanced-cli.sh /app/
+
+# Make script executable
+RUN chmod +x test-enhanced-cli.sh
+
+# Run enhanced CLI tests
+CMD ["./test-enhanced-cli.sh"]

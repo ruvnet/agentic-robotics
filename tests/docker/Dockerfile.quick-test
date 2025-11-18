@@ -1,0 +1,58 @@
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+# Install the main package from npm registry
+RUN npm install -g agentic-robotics
+
+# Copy test scripts
+COPY test-enhanced-cli.sh /app/
+COPY test-dialog-automated.sh /app/
+COPY test-mcp-server.sh /app/
+
+# Make scripts executable
+RUN chmod +x /app/*.sh
+
+# Create simple test runner
+RUN echo '#!/bin/bash' > /app/run-all-tests.sh && \
+    echo 'set +e' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo 'echo "Test Suite 1: Enhanced CLI"' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo './test-enhanced-cli.sh' >> /app/run-all-tests.sh && \
+    echo 'TEST1=$?' >> /app/run-all-tests.sh && \
+    echo '' >> /app/run-all-tests.sh && \
+    echo 'echo ""' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo 'echo "Test Suite 2: Dialog Mode"' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo './test-dialog-automated.sh' >> /app/run-all-tests.sh && \
+    echo 'TEST2=$?' >> /app/run-all-tests.sh && \
+    echo '' >> /app/run-all-tests.sh && \
+    echo 'echo ""' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo 'echo "Test Suite 3: MCP Server"' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo './test-mcp-server.sh' >> /app/run-all-tests.sh && \
+    echo 'TEST3=$?' >> /app/run-all-tests.sh && \
+    echo '' >> /app/run-all-tests.sh && \
+    echo 'echo ""' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo 'echo "FINAL RESULTS"' >> /app/run-all-tests.sh && \
+    echo 'echo "===================================="' >> /app/run-all-tests.sh && \
+    echo '[ $TEST1 -eq 0 ] && echo "✅ Enhanced CLI Tests PASSED" || echo "❌ Enhanced CLI Tests FAILED"' >> /app/run-all-tests.sh && \
+    echo '[ $TEST2 -eq 0 ] && echo "✅ Dialog Tests PASSED" || echo "❌ Dialog Tests FAILED"' >> /app/run-all-tests.sh && \
+    echo '[ $TEST3 -eq 0 ] && echo "✅ MCP Server Tests PASSED" || echo "❌ MCP Server Tests FAILED"' >> /app/run-all-tests.sh && \
+    echo 'echo ""' >> /app/run-all-tests.sh && \
+    echo 'if [ $TEST1 -eq 0 ] && [ $TEST2 -eq 0 ] && [ $TEST3 -eq 0 ]; then' >> /app/run-all-tests.sh && \
+    echo '  echo "🎉 ALL TESTS PASSED!"' >> /app/run-all-tests.sh && \
+    echo '  exit 0' >> /app/run-all-tests.sh && \
+    echo 'else' >> /app/run-all-tests.sh && \
+    echo '  echo "⚠️  SOME TESTS FAILED"' >> /app/run-all-tests.sh && \
+    echo '  exit 1' >> /app/run-all-tests.sh && \
+    echo 'fi' >> /app/run-all-tests.sh && \
+    chmod +x /app/run-all-tests.sh
+
+# Run all test suites
+CMD ["./run-all-tests.sh"]

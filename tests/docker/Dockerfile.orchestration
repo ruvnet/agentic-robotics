@@ -1,0 +1,16 @@
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+# Install the main package from npm registry
+RUN npm install agentic-robotics --verbose
+
+# Copy test script
+COPY test-agent-orchestration.mjs /app/
+
+# Make script executable
+RUN chmod +x test-agent-orchestration.mjs
+
+# Run orchestration tests
+CMD ["node", "test-agent-orchestration.mjs"]
