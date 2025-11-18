@@ -32,7 +32,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./agentic-robotics.linux-x64-musl.node')
             } else {
-              nativeBinding = require('agentic-robotics-linux-x64-musl')
+              nativeBinding = require('@agentic-robotics/linux-x64-musl')
             }
           } catch (e) {
             loadError = e
@@ -43,7 +43,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./agentic-robotics.linux-x64-gnu.node')
             } else {
-              nativeBinding = require('agentic-robotics-linux-x64-gnu')
+              nativeBinding = require('@agentic-robotics/linux-x64-gnu')
             }
           } catch (e) {
             loadError = e
@@ -56,7 +56,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./agentic-robotics.linux-arm64-gnu.node')
           } else {
-            nativeBinding = require('agentic-robotics-linux-arm64-gnu')
+            nativeBinding = require('@agentic-robotics/linux-arm64-gnu')
           }
         } catch (e) {
           loadError = e
@@ -74,7 +74,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./agentic-robotics.darwin-x64.node')
           } else {
-            nativeBinding = require('agentic-robotics-darwin-x64')
+            nativeBinding = require('@agentic-robotics/darwin-x64')
           }
         } catch (e) {
           loadError = e
@@ -86,7 +86,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./agentic-robotics.darwin-arm64.node')
           } else {
-            nativeBinding = require('agentic-robotics-darwin-arm64')
+            nativeBinding = require('@agentic-robotics/darwin-arm64')
           }
         } catch (e) {
           loadError = e
