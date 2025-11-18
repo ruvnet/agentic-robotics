@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "High-performance agentic robotics framework - Core bindings",
   "main": "index.js",
   "types": "index.d.ts",
@@ -28,10 +28,10 @@
     "access": "public"
   },
   "optionalDependencies": {
-    "@agentic-robotics/linux-x64-gnu": "0.2.0",
-    "@agentic-robotics/linux-arm64-gnu": "0.2.0",
-    "@agentic-robotics/darwin-x64": "0.2.0",
-    "@agentic-robotics/darwin-arm64": "0.2.0"
+    "@agentic-robotics/linux-x64-gnu": "^0.2.0",
+    "@agentic-robotics/linux-arm64-gnu": "^0.2.0",
+    "@agentic-robotics/darwin-x64": "^0.2.0",
+    "@agentic-robotics/darwin-arm64": "^0.2.0"
   },
   "homepage": "https://ruv.io"
 }
