@@ -20,12 +20,19 @@
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0",
     "tsx": "^4.19.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.1.7"
   },
   "dependencies": {
-    "agentdb": "^1.6.1",
+    "agentdb": "^1.1.2",
     "agentic-flow": "^1.9.0",
-    "@modelcontextprotocol/sdk": "^1.0.0"
+    "@modelcontextprotocol/sdk": ">=1.25.4"
+  },
+  "overrides": {
+    "agentdb": ">=1.1.2",
+    "agentic-flow": ">=1.10.3",
+    "@modelcontextprotocol/sdk": ">=1.25.4",
+    "vitest": ">=4.1.7",
+    "protobufjs": ">=7.4.0"
   },
   "engines": {
     "node": ">=18.0.0"

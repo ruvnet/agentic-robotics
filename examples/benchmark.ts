@@ -5,7 +5,7 @@
  * Measures execution time, memory usage, and throughput for each example.
  */
 
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { performance } from 'perf_hooks';
 
 interface BenchmarkResult {
@@ -36,9 +36,11 @@ class ExampleBenchmark {
     let peakMemory = 0;
 
     try {
-      // Run the example with timeout
-      const timeout = Math.floor(duration / 1000) + 1;
-      execSync(`timeout ${timeout} ${command}`, {
+      // Run the example with timeout.
+      // Use execFileSync with an argument array to avoid shell injection.
+      const timeout = String(Math.floor(duration / 1000) + 1);
+      const cmdParts = command.trim().split(/\s+/);
+      execFileSync('timeout', [timeout, ...cmdParts], {
         stdio: 'pipe',
         encoding: 'utf-8',
       });
