@@ -10,10 +10,40 @@
  */
 
 import { spawn } from 'child_process';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 
-const execAsync = promisify(exec);
+/**
+ * SECURITY: Replaces exec/execAsync (shell=true) with a spawn-based helper
+ * that passes arguments as an array, preventing command injection through
+ * user-supplied strings such as query, taskName, outcome, strategy, etc.
+ */
+function spawnAsync(
+  cmd: string,
+  args: string[],
+  env?: Record<string, string>
+): Promise<{ stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args, {
+      env: { ...process.env, ...env },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (d: Buffer) => { stdout += d.toString(); });
+    child.stderr.on('data', (d: Buffer) => { stderr += d.toString(); });
+    child.on('close', (code) => {
+      if (code !== 0 && code !== null) {
+        const err = new Error(stderr || `Process exited with code ${code}`);
+        (err as any).code = code;
+        reject(err);
+      } else {
+        resolve({ stdout, stderr });
+      }
+    });
+    child.on('error', reject);
+  });
+}
+
+const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({ AGENTDB_PATH: dbPath });
 
 export interface Episode {
   sessionId: string;
@@ -82,9 +112,11 @@ export class EnhancedAgentDBMemory {
     const startTime = Date.now();
 
     try {
-      // Initialize with optimized settings
-      const { stdout, stderr } = await execAsync(
-        `npx agentdb init "${this.dbPath}" --dimension 768 --preset high-performance --enable-cache`
+      // Initialize with optimized settings.
+      // SECURITY: dbPath passed as argument, not interpolated into shell string.
+      const { stdout, stderr } = await spawnAsync(
+        'npx',
+        ['agentdb', 'init', this.dbPath, '--dimension', '768', '--preset', 'high-performance', '--enable-cache']
       );
 
       console.error('✅ AgentDB initialized:', this.dbPath);
@@ -110,20 +142,21 @@ export class EnhancedAgentDBMemory {
       critique = await this.generateCritique(episode);
     }
 
-    const cmd = [
-      'npx agentdb reflexion store',
-      `"${episode.sessionId}"`,
-      `"${episode.taskName}"`,
+    // SECURITY: Build an argument array — no shell interpolation of user data.
+    const args = [
+      'agentdb', 'reflexion', 'store',
+      episode.sessionId,
+      episode.taskName,
       episode.confidence.toString(),
       episode.success.toString(),
-      episode.outcome ? `"${episode.outcome}"` : '""',
-      episode.strategy ? `--strategy "${episode.strategy}"` : '',
-      episode.reasoning ? `--reasoning "${episode.reasoning}"` : '',
-      critique ? `--critique "${critique}"` : '',
-    ].join(' ');
+      episode.outcome || '',
+    ];
+    if (episode.strategy) { args.push('--strategy', episode.strategy); }
+    if (episode.reasoning) { args.push('--reasoning', episode.reasoning); }
+    if (critique) { args.push('--critique', critique); }
 
     try {
-      await execAsync(`AGENTDB_PATH="${this.dbPath}" ${cmd}`);
+      await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
 
       const storeTime = Date.now() - startTime;
       this.performanceMetrics.storeTimes.push(storeTime);
@@ -152,29 +185,17 @@ export class EnhancedAgentDBMemory {
   ): Promise<Memory[]> {
     const startTime = Date.now();
 
-    let cmd = `npx agentdb reflexion retrieve "${query}" --k ${k}`;
-
-    if (options.minReward !== undefined) {
-      cmd += ` --min-reward ${options.minReward}`;
-    }
-    if (options.onlySuccesses) {
-      cmd += ' --only-successes';
-    }
-    if (options.onlyFailures) {
-      cmd += ' --only-failures';
-    }
-    if (options.synthesizeContext) {
-      cmd += ' --synthesize-context';
-    }
-    if (options.enableReasoning) {
-      cmd += ' --enable-causal-reasoning';
-    }
-    if (options.timeWindow) {
-      cmd += ` --time-window ${options.timeWindow}`;
-    }
+    // SECURITY: Build argument array — query and option values not shell-interpolated.
+    const args = ['agentdb', 'reflexion', 'retrieve', query, '--k', String(k)];
+    if (options.minReward !== undefined) { args.push('--min-reward', String(options.minReward)); }
+    if (options.onlySuccesses) { args.push('--only-successes'); }
+    if (options.onlyFailures) { args.push('--only-failures'); }
+    if (options.synthesizeContext) { args.push('--synthesize-context'); }
+    if (options.enableReasoning) { args.push('--enable-causal-reasoning'); }
+    if (options.timeWindow) { args.push('--time-window', String(options.timeWindow)); }
 
     try {
-      const { stdout } = await execAsync(`AGENTDB_PATH="${this.dbPath}" ${cmd}`);
+      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
 
       const retrievalTime = Date.now() - startTime;
       this.performanceMetrics.retrievalTimes.push(retrievalTime);
@@ -219,22 +240,20 @@ export class EnhancedAgentDBMemory {
     const startTime = Date.now();
     const { k = 5, minConfidence = 0.0, domain, synthesizeReasoning = true } = options;
 
-    let cmd = `npx agentdb query --query "${query}" --k ${k} --min-confidence ${minConfidence}`;
-
-    if (domain) {
-      cmd += ` --domain "${domain}"`;
-    }
-
-    cmd += ' --synthesize-context';
-
-    if (synthesizeReasoning) {
-      cmd += ' --enable-causal-reasoning';
-    }
-
-    cmd += ' --format json';
+    // SECURITY: Argument array — query, domain, and numeric options not shell-interpolated.
+    const args = [
+      'agentdb', 'query',
+      '--query', query,
+      '--k', String(k),
+      '--min-confidence', String(minConfidence),
+      '--synthesize-context',
+      '--format', 'json',
+    ];
+    if (domain) { args.push('--domain', domain); }
+    if (synthesizeReasoning) { args.push('--enable-causal-reasoning'); }
 
     try {
-      const { stdout } = await execAsync(`AGENTDB_PATH="${this.dbPath}" ${cmd}`);
+      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
 
       const retrievalTime = Date.now() - startTime;
       this.performanceMetrics.retrievalTimes.push(retrievalTime);
@@ -277,10 +296,17 @@ export class EnhancedAgentDBMemory {
       enablePruning = true,
     } = options;
 
-    const cmd = `npx agentdb skill consolidate ${minAttempts} ${minReward} ${timeWindowDays} ${enablePruning}`;
+    // SECURITY: Numeric values passed as separate args, not interpolated into a shell string.
+    const args = [
+      'agentdb', 'skill', 'consolidate',
+      String(minAttempts),
+      String(minReward),
+      String(timeWindowDays),
+      String(enablePruning),
+    ];
 
     try {
-      const { stdout } = await execAsync(`AGENTDB_PATH="${this.dbPath}" ${cmd}`);
+      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
 
       const consolidationTime = Date.now() - startTime;
 
@@ -310,10 +336,17 @@ export class EnhancedAgentDBMemory {
     const startTime = Date.now();
     const { k = 10, minSuccessRate = 0.5, sortBy = 'success_rate' } = options;
 
-    const cmd = `npx agentdb skill search "${query}" --k ${k} --min-success-rate ${minSuccessRate} --sort-by ${sortBy} --format json`;
+    // SECURITY: query and sortBy passed as separate args.
+    const args = [
+      'agentdb', 'skill', 'search', query,
+      '--k', String(k),
+      '--min-success-rate', String(minSuccessRate),
+      '--sort-by', sortBy,
+      '--format', 'json',
+    ];
 
     try {
-      const { stdout } = await execAsync(`AGENTDB_PATH="${this.dbPath}" ${cmd}`);
+      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
 
       const searchTime = Date.now() - startTime;
 
@@ -360,7 +393,7 @@ export class EnhancedAgentDBMemory {
    */
   async getStats(): Promise<MemoryStats> {
     try {
-      const { stdout } = await execAsync(`AGENTDB_PATH="${this.dbPath}" npx agentdb db stats --format json`);
+      const { stdout } = await spawnAsync('npx', ['agentdb', 'db', 'stats', '--format', 'json'], AGENTDB_ENV(this.dbPath));
 
       const lines = stdout.trim().split('\n');
       const jsonLine = lines.find(line => line.startsWith('{'));
@@ -403,14 +436,10 @@ export class EnhancedAgentDBMemory {
     const startTime = Date.now();
 
     try {
-      // Vacuum database
-      await execAsync(`AGENTDB_PATH="${this.dbPath}" npx agentdb db vacuum`);
-
-      // Rebuild indexes
-      await execAsync(`AGENTDB_PATH="${this.dbPath}" npx agentdb db reindex`);
-
-      // Optimize vector index
-      await execAsync(`AGENTDB_PATH="${this.dbPath}" npx agentdb db optimize-vectors`);
+      // SECURITY: All three maintenance commands use spawnAsync with argument arrays.
+      await spawnAsync('npx', ['agentdb', 'db', 'vacuum'], AGENTDB_ENV(this.dbPath));
+      await spawnAsync('npx', ['agentdb', 'db', 'reindex'], AGENTDB_ENV(this.dbPath));
+      await spawnAsync('npx', ['agentdb', 'db', 'optimize-vectors'], AGENTDB_ENV(this.dbPath));
 
       const optimizeTime = Date.now() - startTime;
       console.error(`⚙️ Database optimized in ${optimizeTime}ms`);
