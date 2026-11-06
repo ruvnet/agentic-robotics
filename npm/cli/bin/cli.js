@@ -7,7 +7,7 @@ const readline = require('readline');
 program
   .name('agentic-robotics')
   .description('CLI tools for agentic robotics framework with AI agent orchestration')
-  .version('0.2.2');
+  .version(require('../package.json').version);
 
 // Test command
 program

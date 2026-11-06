@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@agentic-robotics/cli.svg)](https://www.npmjs.com/package/@agentic-robotics/cli)
 [![Downloads](https://img.shields.io/npm/dm/@agentic-robotics/cli.svg)](https://www.npmjs.com/package/@agentic-robotics/cli)
-[![License](https://img.shields.io/npm/l/@agentic-robotics/cli.svg)](https://github.com/ruvnet/vibecast)
+[![License](https://img.shields.io/npm/l/@agentic-robotics/cli.svg)](https://github.com/ruvnet/agentic-robotics)
 
 Command-line tools for the **agentic-robotics** framework.
 

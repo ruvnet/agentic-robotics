@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@agentic-robotics/core.svg)](https://www.npmjs.com/package/@agentic-robotics/core)
 [![Downloads](https://img.shields.io/npm/dm/@agentic-robotics/core.svg)](https://www.npmjs.com/package/@agentic-robotics/core)
-[![License](https://img.shields.io/npm/l/@agentic-robotics/core.svg)](https://github.com/ruvnet/vibecast)
+[![License](https://img.shields.io/npm/l/@agentic-robotics/core.svg)](https://github.com/ruvnet/agentic-robotics)
 [![Node](https://img.shields.io/node/v/@agentic-robotics/core.svg)](https://nodejs.org)
 
 Core native bindings for the **agentic-robotics** framework - High-performance robotics middleware with ROS2 compatibility.
@@ -283,7 +283,7 @@ Visit [ruv.io](https://ruv.io) for more information and documentation.
 
 ## Contributing
 
-Contributions welcome! Visit [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
+Contributions welcome! Visit [github.com/ruvnet/agentic-robotics](https://github.com/ruvnet/agentic-robotics)
 
 ## License
 
@@ -292,5 +292,5 @@ MIT OR Apache-2.0
 ## Support
 
 - 📚 [Documentation](https://docs.rs/agentic-robotics)
-- 🐛 [Issue Tracker](https://github.com/ruvnet/vibecast/issues)
-- 💬 [Discussions](https://github.com/ruvnet/vibecast/discussions)
+- 🐛 [Issue Tracker](https://github.com/ruvnet/agentic-robotics/issues)
+- 💬 [Discussions](https://github.com/ruvnet/agentic-robotics/discussions)

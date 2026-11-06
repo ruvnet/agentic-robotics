@@ -1,13 +1,13 @@
 {
   "name": "@agentic-robotics/cli",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "CLI tools for agentic robotics framework",
   "bin": {
     "agentic-robotics": "./bin/cli.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/vibecast.git"
+    "url": "git+https://github.com/ruvnet/agentic-robotics.git"
   },
   "license": "MIT OR Apache-2.0",
   "keywords": [
@@ -25,5 +25,19 @@
     "@agentic-robotics/core": "^0.2.1",
     "commander": "^12.0.0"
   },
-  "homepage": "https://ruv.io"
+  "homepage": "https://ruv.io",
+  "main": "index.js",
+  "files": [
+    "bin",
+    "index.js",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "agentic-flow": ">=1.10.3"
+  },
+  "peerDependenciesMeta": {
+    "agentic-flow": {
+      "optional": true
+    }
+  }
 }

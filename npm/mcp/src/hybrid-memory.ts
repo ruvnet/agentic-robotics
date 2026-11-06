@@ -6,11 +6,25 @@
  */
 
 import Database from 'better-sqlite3';
-import { promisify } from 'util';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import type { Episode, Memory } from './memory.js';
 
-const execAsync = promisify(exec);
+/**
+ * Run a command without a shell. Every user-controlled value is passed as a
+ * discrete argv element (same hardening as enhanced-memory.ts / memory.ts).
+ */
+function execFileAsync(
+  file: string,
+  args: string[],
+  options: { timeout: number; env: NodeJS.ProcessEnv }
+): Promise<{ stdout: string }> {
+  return new Promise((resolve, reject) => {
+    execFile(file, args, { ...options, shell: false }, (error, stdout) => {
+      if (error) reject(error);
+      else resolve({ stdout: String(stdout) });
+    });
+  });
+}
 
 export class HybridAgentDBMemory {
   private db!: Database.Database;
@@ -155,23 +169,24 @@ export class HybridAgentDBMemory {
 
     // Try CLI vector search first (semantic search)
     try {
-      let cmd = `npx agentdb reflexion retrieve "${query}" --k ${k}`;
+      const args = ['agentdb', 'reflexion', 'retrieve', query, '--k', String(k)];
 
       if (options.minReward !== undefined) {
-        cmd += ` --min-reward ${options.minReward}`;
+        args.push('--min-reward', String(options.minReward));
       }
       if (options.onlySuccesses) {
-        cmd += ' --only-successes';
+        args.push('--only-successes');
       }
       if (options.onlyFailures) {
-        cmd += ' --only-failures';
+        args.push('--only-failures');
       }
       if (options.synthesizeContext) {
-        cmd += ' --synthesize-context';
+        args.push('--synthesize-context');
       }
 
-      const { stdout } = await execAsync(`AGENTDB_PATH="${this.dbPath}" ${cmd}`, {
+      const { stdout } = await execFileAsync('npx', args, {
         timeout: 10000,
+        env: { ...process.env, AGENTDB_PATH: this.dbPath },
       });
 
       const lines = stdout.trim().split('\n');
@@ -181,10 +196,14 @@ export class HybridAgentDBMemory {
         const data = JSON.parse(jsonLine);
         const results = Array.isArray(data) ? data : [data];
 
-        const elapsed = performance.now() - startTime;
-        this.updateRetrieveMetrics(elapsed);
-
-        return results;
+        // The agentdb CLI reads its own `episodes` table, not the
+        // `reflexion_episodes` table this class writes, so an empty result
+        // here is not authoritative: fall through to the SQL search.
+        if (results.length > 0) {
+          const elapsed = performance.now() - startTime;
+          this.updateRetrieveMetrics(elapsed);
+          return results;
+        }
       }
     } catch (error: any) {
       console.error('Vector search failed, falling back to SQL:', error.message);
@@ -201,8 +220,13 @@ export class HybridAgentDBMemory {
       whereConditions.push('success = 0');
     }
 
-    // Simple keyword matching
-    whereConditions.push("task_name LIKE ? OR outcome LIKE ?");
+    if (options.minReward !== undefined) {
+      whereConditions.push('confidence >= ?');
+      params.push(options.minReward);
+    }
+
+    // Simple keyword matching (parenthesised so it cannot bypass the filters above)
+    whereConditions.push('(task_name LIKE ? OR outcome LIKE ?)');
     params.push(`%${query}%`, `%${query}%`);
 
     const stmt = this.db.prepare(`

@@ -4,7 +4,7 @@
   "description": "High-performance agentic robotics framework with ROS2 compatibility - Complete toolkit",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/vibecast.git"
+    "url": "git+https://github.com/ruvnet/agentic-robotics.git"
   },
   "homepage": "https://ruv.io",
   "license": "MIT OR Apache-2.0",

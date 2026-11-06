@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/core",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "High-performance agentic robotics framework - Core bindings",
   "main": "index.js",
   "types": "index.d.ts",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/vibecast.git"
+    "url": "git+https://github.com/ruvnet/agentic-robotics.git"
   },
   "license": "MIT OR Apache-2.0",
   "keywords": [
