@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/mcp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Model Context Protocol server for agentic robotics with AgentDB integration",
   "type": "module",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/vibecast.git"
+    "url": "git+https://github.com/ruvnet/agentic-robotics.git"
   },
   "license": "MIT OR Apache-2.0",
   "keywords": [
@@ -39,7 +39,6 @@
     "@agentic-robotics/core": "^0.2.1",
     "@modelcontextprotocol/sdk": ">=1.25.4",
     "agentdb": "^1.1.2",
-    "agentic-flow": "^1.10.3",
     "better-sqlite3": "^12.4.1"
   },
   "devDependencies": {
@@ -49,5 +48,17 @@
     "typescript": "^5.7.0",
     "vitest": "^4.1.7"
   },
-  "homepage": "https://ruv.io"
+  "homepage": "https://ruv.io",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "agentic-flow": ">=2.0.14"
+  },
+  "peerDependenciesMeta": {
+    "agentic-flow": {
+      "optional": true
+    }
+  }
 }

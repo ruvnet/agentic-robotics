@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@agentic-robotics/mcp.svg)](https://www.npmjs.com/package/@agentic-robotics/mcp)
 [![Downloads](https://img.shields.io/npm/dm/@agentic-robotics/mcp.svg)](https://www.npmjs.com/package/@agentic-robotics/mcp)
-[![License](https://img.shields.io/npm/l/@agentic-robotics/mcp.svg)](https://github.com/ruvnet/vibecast)
+[![License](https://img.shields.io/npm/l/@agentic-robotics/mcp.svg)](https://github.com/ruvnet/agentic-robotics)
 
 **Model Context Protocol (MCP) server** for agentic robotics with AgentDB memory and agentic-flow orchestration.
 
@@ -287,7 +287,7 @@ Visit [ruv.io](https://ruv.io) for more information and documentation.
 
 ## Contributing
 
-Contributions welcome! Visit [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
+Contributions welcome! Visit [github.com/ruvnet/agentic-robotics](https://github.com/ruvnet/agentic-robotics)
 
 ## License
 
@@ -296,5 +296,5 @@ MIT OR Apache-2.0
 ## Support
 
 - 📚 [Documentation](https://ruv.io/docs)
-- 🐛 [Issue Tracker](https://github.com/ruvnet/vibecast/issues)
-- 💬 [Discussions](https://github.com/ruvnet/vibecast/discussions)
+- 🐛 [Issue Tracker](https://github.com/ruvnet/agentic-robotics/issues)
+- 💬 [Discussions](https://github.com/ruvnet/agentic-robotics/discussions)

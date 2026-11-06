@@ -1,7 +1,7 @@
 # @agentic-robotics/linux-x64-gnu
 
 [![npm version](https://img.shields.io/npm/v/@agentic-robotics/linux-x64-gnu.svg)](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu)
-[![License](https://img.shields.io/npm/l/@agentic-robotics/linux-x64-gnu.svg)](https://github.com/ruvnet/vibecast)
+[![License](https://img.shields.io/npm/l/@agentic-robotics/linux-x64-gnu.svg)](https://github.com/ruvnet/agentic-robotics)
 
 Native bindings for **agentic-robotics** on Linux x64 (GNU libc).
 
