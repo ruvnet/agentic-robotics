@@ -34,11 +34,29 @@ const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({
   AGENTDB_FORCE_SQLJS: '1',
 });
 
+// The sql.js backend rewrites the whole file and refuses to save over a
+// concurrent change, so CLI calls against one database are run one at a time.
+const dbQueues = new Map<string, Promise<unknown>>();
+
 /**
  * Helper to safely spawn a command and capture output
  * Prevents command injection by using spawn with argument array
  */
 function spawnAsync(
+  command: string,
+  args: string[],
+  env?: Record<string, string>
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  const key = env?.AGENTDB_PATH;
+  if (!key) return spawnOnce(command, args, env);
+  const run = (dbQueues.get(key) ?? Promise.resolve())
+    .catch(() => undefined)
+    .then(() => spawnOnce(command, args, env));
+  dbQueues.set(key, run);
+  return run;
+}
+
+function spawnOnce(
   command: string,
   args: string[],
   env?: Record<string, string>

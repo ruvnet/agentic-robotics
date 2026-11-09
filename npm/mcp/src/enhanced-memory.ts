@@ -16,7 +16,25 @@ import { spawn } from 'child_process';
  * that passes arguments as an array, preventing command injection through
  * user-supplied strings such as query, taskName, outcome, strategy, etc.
  */
+// The sql.js backend rewrites the whole file and refuses to save over a
+// concurrent change, so CLI calls against one database are run one at a time.
+const dbQueues = new Map<string, Promise<unknown>>();
+
 function spawnAsync(
+  cmd: string,
+  args: string[],
+  env?: Record<string, string>
+): Promise<{ stdout: string; stderr: string }> {
+  const key = env?.AGENTDB_PATH;
+  if (!key) return spawnOnce(cmd, args, env);
+  const run = (dbQueues.get(key) ?? Promise.resolve())
+    .catch(() => undefined)
+    .then(() => spawnOnce(cmd, args, env));
+  dbQueues.set(key, run);
+  return run;
+}
+
+function spawnOnce(
   cmd: string,
   args: string[],
   env?: Record<string, string>

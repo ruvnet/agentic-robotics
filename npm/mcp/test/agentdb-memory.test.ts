@@ -46,4 +46,22 @@ describe('AgentDBMemory (real agentdb CLI)', () => {
     const text = String(stats.stats).replace(/\x1b\[[0-9;]*m/g, '');
     expect(text).toMatch(/episodes:\s*2 records/);
   }, 180_000);
+
+  it('keeps every episode when stores run concurrently', async () => {
+    await Promise.all(
+      [1, 2, 3, 4, 5].map((i) =>
+        memory.storeEpisode({
+          sessionId: 's2',
+          taskName: `task ${i}`,
+          confidence: 0.9,
+          success: true,
+          outcome: `outcome ${i}`,
+        })
+      )
+    );
+
+    const stats = await memory.getStats();
+    const text = String(stats.stats).replace(/\x1b\[[0-9;]*m/g, '');
+    expect(text).toMatch(/episodes:\s*5 records/);
+  }, 300_000);
 });
