@@ -26,6 +26,14 @@ export interface Memory {
   timestamp: number;
 }
 
+// agentdb 3.x CLI calls `db.save()`, which only the sql.js backend implements;
+// with native better-sqlite3 the write lands but the command exits 1. Force the
+// sql.js backend so every CLI call reports its real status.
+const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({
+  AGENTDB_PATH: dbPath,
+  AGENTDB_FORCE_SQLJS: '1',
+});
+
 /**
  * Helper to safely spawn a command and capture output
  * Prevents command injection by using spawn with argument array
@@ -87,7 +95,7 @@ export class AgentDBMemory {
         '768',
         '--preset',
         'medium',
-      ]);
+      ], AGENTDB_ENV(this.dbPath));
 
       if (code === 0 || stderr.includes('already exists')) {
         console.error('AgentDB initialized:', this.dbPath);
@@ -124,7 +132,7 @@ export class AgentDBMemory {
           episode.success.toString(),
           episode.outcome || '',
         ],
-        { AGENTDB_PATH: this.dbPath }
+        AGENTDB_ENV(this.dbPath)
       );
 
       if (code !== 0) {
@@ -171,7 +179,7 @@ export class AgentDBMemory {
 
     try {
       const { stdout, code, stderr } = await spawnAsync('npx', args, {
-        AGENTDB_PATH: this.dbPath,
+        ...AGENTDB_ENV(this.dbPath),
       });
 
       if (code !== 0) {
@@ -228,7 +236,7 @@ export class AgentDBMemory {
 
     try {
       const { stdout, code, stderr } = await spawnAsync('npx', args, {
-        AGENTDB_PATH: this.dbPath,
+        ...AGENTDB_ENV(this.dbPath),
       });
 
       if (code !== 0) {
@@ -276,7 +284,7 @@ export class AgentDBMemory {
           timeWindowDays.toString(),
           'true',
         ],
-        { AGENTDB_PATH: this.dbPath }
+        AGENTDB_ENV(this.dbPath)
       );
 
       if (code !== 0) {
@@ -296,7 +304,7 @@ export class AgentDBMemory {
 
     try {
       const { stdout, code, stderr } = await spawnAsync('npx', ['agentdb', 'db', 'stats'], {
-        AGENTDB_PATH: this.dbPath,
+        ...AGENTDB_ENV(this.dbPath),
       });
 
       if (code !== 0) {

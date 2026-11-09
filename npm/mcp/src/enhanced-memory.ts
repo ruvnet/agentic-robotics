@@ -43,7 +43,13 @@ function spawnAsync(
   });
 }
 
-const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({ AGENTDB_PATH: dbPath });
+// agentdb 3.x CLI calls `db.save()`, which only the sql.js backend implements;
+// with native better-sqlite3 the write lands but the command exits 1. Force the
+// sql.js backend so every CLI call reports its real status.
+const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({
+  AGENTDB_PATH: dbPath,
+  AGENTDB_FORCE_SQLJS: '1',
+});
 
 export interface Episode {
   sessionId: string;
@@ -116,7 +122,8 @@ export class EnhancedAgentDBMemory {
       // SECURITY: dbPath passed as argument, not interpolated into shell string.
       const { stdout, stderr } = await spawnAsync(
         'npx',
-        ['agentdb', 'init', this.dbPath, '--dimension', '768', '--preset', 'high-performance', '--enable-cache']
+        ['agentdb', 'init', this.dbPath, '--dimension', '768', '--preset', 'high-performance', '--enable-cache'],
+        AGENTDB_ENV(this.dbPath)
       );
 
       console.error('✅ AgentDB initialized:', this.dbPath);

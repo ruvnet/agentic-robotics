@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/mcp",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Model Context Protocol server for agentic robotics with AgentDB integration",
   "type": "module",
   "main": "dist/index.js",
@@ -38,7 +38,7 @@
   "dependencies": {
     "@agentic-robotics/core": "^0.2.1",
     "@modelcontextprotocol/sdk": ">=1.25.4",
-    "agentdb": "^1.1.2",
+    "agentdb": "^3.7.1",
     "better-sqlite3": "^12.4.1"
   },
   "devDependencies": {
