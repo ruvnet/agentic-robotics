@@ -85,7 +85,7 @@ jobs:
             dir: examples/self-learning
             name: "@agentic-robotics/self-learning"
             test: node cli/index.js --help
-            smoke: node --input-type=module -e "const m = await import('@agentic-robotics/self-learning'); if (typeof m.MasterOrchestrator !== 'function') throw new Error('missing MasterOrchestrator');" && "$PWD/node_modules/.bin/agentic-learn" --help
+            smoke: node --input-type=module -e "const m = await import('@agentic-robotics/self-learning'); if (typeof m.MasterOrchestrator !== 'function') throw new Error('missing MasterOrchestrator');" && "$PWD/node_modules/.bin/agentic-learn" --help && test "$("$PWD/node_modules/.bin/agentic-learn" --version)" = "$(node -p "require('./node_modules/@agentic-robotics/self-learning/package.json').version")"
     env:
       PKG_DIR: ${{ matrix.dir || format('npm/{0}', matrix.pkg) }}
     defaults:

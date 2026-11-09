@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/self-learning",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "AI-powered self-learning optimization system with swarm intelligence, PSO, NSGA-II, evolutionary algorithms for autonomous robotics, multi-agent systems, and continuous learning",
   "type": "module",
   "main": "./dist/index.js",
@@ -95,7 +95,7 @@
     "npm": ">=9.0.0"
   },
   "dependencies": {
-    "agentdb": "^3.7.1",
+    "agentdb": "^3.7.2",
     "agentic-flow": "^3.4.3",
     "@modelcontextprotocol/sdk": ">=1.25.4",
     "commander": "^12.0.0",

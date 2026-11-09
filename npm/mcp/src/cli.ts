@@ -4,12 +4,15 @@
  * ROS3 MCP Server CLI
  */
 
+import { readFileSync } from 'fs';
 import { ROS3McpServer } from './server.js';
+
+const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
 async function main() {
   const server = new ROS3McpServer({
     name: 'ros3-mcp-server',
-    version: '1.0.0',
+    version,
     dbPath: process.env.AGENTDB_PATH || './ros3-agentdb.db',
   });
 
