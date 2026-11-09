@@ -81,9 +81,16 @@ jobs:
             name: "@agentic-robotics/linux-x64-gnu"
             test: node -e "require('./agentic-robotics.linux-x64-gnu.node')"
             smoke: node -e "const b = require('@agentic-robotics/linux-x64-gnu'); if (typeof b.AgenticNode !== 'function') throw new Error('bad binding');"
+          - pkg: self-learning
+            dir: examples/self-learning
+            name: "@agentic-robotics/self-learning"
+            test: node cli/index.js --help
+            smoke: node --input-type=module -e "const m = await import('@agentic-robotics/self-learning'); if (typeof m.MasterOrchestrator !== 'function') throw new Error('missing MasterOrchestrator');" && "$PWD/node_modules/.bin/agentic-learn" --help
+    env:
+      PKG_DIR: ${{ matrix.dir || format('npm/{0}', matrix.pkg) }}
     defaults:
       run:
-        working-directory: npm/${{ matrix.pkg }}
+        working-directory: ${{ matrix.dir || format('npm/{0}', matrix.pkg) }}
     steps:
       - uses: actions/checkout@v4
         timeout-minutes: 5
@@ -116,5 +123,5 @@ jobs:
           cd "$dir"
           npm init -y >/dev/null
           npm install --no-audit --no-fund "$RUNNER_TEMP"/pack/*.tgz
-          test "$(node -p "require('${{ matrix.name }}/package.json').version")" = "$(node -p "require('$GITHUB_WORKSPACE/npm/${{ matrix.pkg }}/package.json').version")"
+          test "$(node -p "require('${{ matrix.name }}/package.json').version")" = "$(node -p "require('$GITHUB_WORKSPACE/$PKG_DIR/package.json').version")"
           ${{ matrix.smoke }}

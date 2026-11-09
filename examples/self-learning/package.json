@@ -1,0 +1,143 @@
+{
+  "name": "@agentic-robotics/self-learning",
+  "version": "1.0.1",
+  "description": "AI-powered self-learning optimization system with swarm intelligence, PSO, NSGA-II, evolutionary algorithms for autonomous robotics, multi-agent systems, and continuous learning",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "agentic-learn": "./cli/index.js",
+    "agentic-optimize": "./cli/optimize.js",
+    "agentic-validate": "./cli/validate.js",
+    "agentic-benchmark": "./cli/benchmark.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch cli/index.ts",
+    "validate": "tsx metrics-validator.ts",
+    "benchmark": "tsx benchmark-optimizer.ts",
+    "navigate": "tsx self-improving-navigator.ts",
+    "orchestrate": "tsx master-orchestrator.ts",
+    "parallel": "tsx parallel-swarm-executor.ts",
+    "quick-start": "./quick-start.sh",
+    "test": "vitest",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"**/*.{ts,json,md}\"",
+    "prepublishOnly": "npm run build && vitest run"
+  },
+  "keywords": [
+    "robotics",
+    "self-learning",
+    "optimization",
+    "swarm-intelligence",
+    "machine-learning",
+    "artificial-intelligence",
+    "particle-swarm-optimization",
+    "pso",
+    "nsga-ii",
+    "multi-objective-optimization",
+    "evolutionary-algorithms",
+    "genetic-algorithms",
+    "autonomous-systems",
+    "autonomous-robots",
+    "adaptive-learning",
+    "reinforcement-learning",
+    "multi-agent-systems",
+    "agentic-flow",
+    "openrouter",
+    "agentdb",
+    "memory-bank",
+    "continuous-learning",
+    "online-learning",
+    "meta-learning",
+    "transfer-learning",
+    "hyperparameter-optimization",
+    "automated-tuning",
+    "benchmark",
+    "performance-optimization",
+    "real-time-learning",
+    "navigation",
+    "path-planning",
+    "swarm-robotics",
+    "collective-intelligence",
+    "mcp",
+    "model-context-protocol",
+    "typescript",
+    "cli",
+    "nodejs",
+    "ai-agents",
+    "deepseek",
+    "gemini",
+    "claude",
+    "gpt-4",
+    "pareto-optimal",
+    "trade-off-analysis"
+  ],
+  "author": {
+    "name": "Agentic Robotics Team",
+    "url": "https://ruv.io/agentic-robotics"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ruvnet/agentic-robotics.git",
+    "directory": "examples/self-learning"
+  },
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues",
+    "email": "support@ruv.io"
+  },
+  "homepage": "https://ruv.io/agentic-robotics",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "agentdb": "^3.7.1",
+    "agentic-flow": "^3.4.3",
+    "@modelcontextprotocol/sdk": ">=1.25.4",
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.0",
+    "inquirer": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/inquirer": "^9.0.0",
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0",
+    "@vitest/coverage-v8": "^2.1.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "prettier": "^3.2.5"
+  },
+  "peerDependencies": {
+    "@agentic-robotics/core": "^0.2.1"
+  },
+  "peerDependenciesMeta": {
+    "@agentic-robotics/core": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "cli",
+    "*.ts",
+    "*.js",
+    "*.sh",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/ruvnet"
+  }
+}
