@@ -1,0 +1,125 @@
+name: release-native
+
+# Builds the four NAPI platform packages of @agentic-robotics/core and uploads
+# each packed tarball with a SHA256SUMS file. Nothing is published from CI: the
+# tarballs are downloaded, checksum-verified and published by a maintainer, and
+# only when every platform built.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to stamp on all platform packages (e.g. 0.2.1)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: ${{ matrix.pkg }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pkg: linux-x64-gnu
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            lib: libagentic_robotics_node.so
+            file_arch: "x86-64"
+            load_test: true
+          - pkg: linux-arm64-gnu
+            runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            lib: libagentic_robotics_node.so
+            file_arch: "aarch64"
+            load_test: true
+          - pkg: darwin-arm64
+            runner: macos-15
+            target: aarch64-apple-darwin
+            lib: libagentic_robotics_node.dylib
+            file_arch: "arm64"
+            load_test: true
+          - pkg: darwin-x64
+            runner: macos-15
+            target: x86_64-apple-darwin
+            lib: libagentic_robotics_node.dylib
+            file_arch: "x86_64"
+            # Cross-built on an arm64 runner; the arm64 Node cannot load it.
+            load_test: false
+    steps:
+      - name: validate version input
+        timeout-minutes: 1
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "bad version: $VERSION"; exit 1; }
+      - uses: actions/checkout@v4
+        timeout-minutes: 5
+      - uses: dtolnay/rust-toolchain@stable
+        timeout-minutes: 5
+        with:
+          targets: ${{ matrix.target }}
+      - uses: actions/setup-node@v4
+        timeout-minutes: 5
+        with:
+          node-version: 22
+      - name: cargo build
+        timeout-minutes: 40
+        run: cargo build --release --locked -p agentic-robotics-node --target ${{ matrix.target }}
+      - name: stage binary
+        timeout-minutes: 2
+        run: |
+          out="npm/${{ matrix.pkg }}/agentic-robotics.${{ matrix.pkg }}.node"
+          cp "target/${{ matrix.target }}/release/${{ matrix.lib }}" "$out"
+          file "$out"
+          file "$out" | grep -q "${{ matrix.file_arch }}"
+      - name: glibc floor
+        if: runner.os == 'Linux'
+        timeout-minutes: 2
+        run: objdump -T "npm/${{ matrix.pkg }}/agentic-robotics.${{ matrix.pkg }}.node" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1
+      - name: load test (core test.js against this binary)
+        if: matrix.load_test
+        timeout-minutes: 5
+        run: |
+          dir="$(mktemp -d)"
+          cp npm/core/index.js npm/core/test.js "$dir/"
+          cp "npm/${{ matrix.pkg }}/agentic-robotics.${{ matrix.pkg }}.node" "$dir/"
+          cd "$dir"
+          node test.js
+      - name: stamp version and pack
+        timeout-minutes: 5
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          mkdir -p dist
+          cd "npm/${{ matrix.pkg }}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          npm pack --dry-run
+          npm pack --pack-destination ../../dist
+          cd ../../dist
+          shasum -a 256 *.tgz > SHA256SUMS
+          cat SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: ${{ matrix.pkg }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
+
+  all-built:
+    name: all platforms built
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: gate
+        timeout-minutes: 1
+        run: echo "All four platform packages built at ${{ inputs.version }} from ${{ github.sha }}"

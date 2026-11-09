@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: cargo check + lib tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # Every workspace member compiles, so nothing is excluded. If a crate has to
+    # be excluded later, add `--exclude <crate>` to both cargo steps and list it here.
+    steps:
+      - uses: actions/checkout@v4
+        timeout-minutes: 5
+      - uses: dtolnay/rust-toolchain@stable
+        timeout-minutes: 5
+      - uses: Swatinem/rust-cache@v2
+        timeout-minutes: 10
+      - name: cargo check (all targets, incl. benches)
+        timeout-minutes: 30
+        run: cargo check --workspace --all-targets --locked
+      - name: cargo test --lib
+        timeout-minutes: 30
+        run: cargo test --workspace --lib --locked
+
+  deny:
+    name: cargo deny advisories
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        timeout-minutes: 5
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        timeout-minutes: 10
+        with:
+          command: check advisories
+
+  npm:
+    name: npm ${{ matrix.pkg }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pkg: core
+            name: "@agentic-robotics/core"
+            test: node test.js
+            smoke: node -e "const c = require('@agentic-robotics/core'); for (const k of ['AgenticNode','AgenticPublisher','AgenticSubscriber']) if (typeof c[k] !== 'function') throw new Error('missing ' + k); new c.AgenticNode('ci-smoke');"
+          - pkg: cli
+            name: "@agentic-robotics/cli"
+            test: node bin/cli.js --version
+            smoke: node -e "require('@agentic-robotics/cli')" && npx --no agentic-robotics --version
+          - pkg: mcp
+            name: "@agentic-robotics/mcp"
+            # vitest 4 + agentdb 3 trips an npm arborist crash on the dev tree only;
+            # consumer installs (no devDependencies) are unaffected.
+            install_flags: --legacy-peer-deps
+            test: npx vitest run
+            smoke: node --input-type=module -e "const m = await import('@agentic-robotics/mcp'); if (typeof m.ROS3McpServer !== 'function') throw new Error('missing ROS3McpServer');"
+          - pkg: agentic-robotics
+            name: agentic-robotics
+            test: "true"
+            # The meta package has no entry point; check it delivers its three packages and the bins.
+            smoke: node -e "for (const p of ['@agentic-robotics/core','@agentic-robotics/cli','@agentic-robotics/mcp']) require.resolve(p + '/package.json');" && npx --no agentic-robotics --version
+          - pkg: linux-x64-gnu
+            name: "@agentic-robotics/linux-x64-gnu"
+            test: node -e "require('./agentic-robotics.linux-x64-gnu.node')"
+            smoke: node -e "const b = require('@agentic-robotics/linux-x64-gnu'); if (typeof b.AgenticNode !== 'function') throw new Error('bad binding');"
+    defaults:
+      run:
+        working-directory: npm/${{ matrix.pkg }}
+    steps:
+      - uses: actions/checkout@v4
+        timeout-minutes: 5
+      - uses: actions/setup-node@v4
+        timeout-minutes: 5
+        with:
+          node-version: 22
+      - name: install
+        timeout-minutes: 10
+        run: npm install --no-audit --no-fund ${{ matrix.install_flags }}
+      - name: build
+        timeout-minutes: 5
+        run: npm run build --if-present
+      - name: test
+        timeout-minutes: 10
+        run: ${{ matrix.test }}
+      - name: pack (dry run)
+        timeout-minutes: 5
+        run: npm pack --dry-run
+      - name: pack
+        timeout-minutes: 5
+        run: |
+          mkdir -p "$RUNNER_TEMP/pack"
+          npm pack --pack-destination "$RUNNER_TEMP/pack"
+          ls -l "$RUNNER_TEMP/pack"
+      - name: import smoke test of the packed tarball
+        timeout-minutes: 10
+        run: |
+          dir="$(mktemp -d)"
+          cd "$dir"
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund "$RUNNER_TEMP"/pack/*.tgz
+          test "$(node -p "require('${{ matrix.name }}/package.json').version")" = "$(node -p "require('$GITHUB_WORKSPACE/npm/${{ matrix.pkg }}/package.json').version")"
+          ${{ matrix.smoke }}

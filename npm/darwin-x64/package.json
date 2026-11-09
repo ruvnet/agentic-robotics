@@ -1,0 +1,28 @@
+{
+  "name": "@agentic-robotics/darwin-x64",
+  "version": "0.2.0",
+  "description": "agentic-robotics native bindings for macOS x64 (Intel)",
+  "main": "agentic-robotics.darwin-x64.node",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruvnet/agentic-robotics.git"
+  },
+  "license": "MIT OR Apache-2.0",
+  "engines": {
+    "node": ">= 14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://ruv.io",
+  "files": [
+    "agentic-robotics.darwin-x64.node",
+    "README.md"
+  ]
+}
