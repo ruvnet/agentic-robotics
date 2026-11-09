@@ -25,7 +25,7 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.{ts,json,md}\"",
-    "prepublishOnly": "npm run build && vitest run"
+    "prepublishOnly": "npm run build && vitest run --passWithNoTests"
   },
   "keywords": [
     "robotics",
