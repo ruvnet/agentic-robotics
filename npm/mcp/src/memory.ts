@@ -26,11 +26,37 @@ export interface Memory {
   timestamp: number;
 }
 
+// agentdb 3.x CLI calls `db.save()`, which only the sql.js backend implements;
+// with native better-sqlite3 the write lands but the command exits 1. Force the
+// sql.js backend so every CLI call reports its real status.
+const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({
+  AGENTDB_PATH: dbPath,
+  AGENTDB_FORCE_SQLJS: '1',
+});
+
+// The sql.js backend rewrites the whole file and refuses to save over a
+// concurrent change, so CLI calls against one database are run one at a time.
+const dbQueues = new Map<string, Promise<unknown>>();
+
 /**
  * Helper to safely spawn a command and capture output
  * Prevents command injection by using spawn with argument array
  */
 function spawnAsync(
+  command: string,
+  args: string[],
+  env?: Record<string, string>
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  const key = env?.AGENTDB_PATH;
+  if (!key) return spawnOnce(command, args, env);
+  const run = (dbQueues.get(key) ?? Promise.resolve())
+    .catch(() => undefined)
+    .then(() => spawnOnce(command, args, env));
+  dbQueues.set(key, run);
+  return run;
+}
+
+function spawnOnce(
   command: string,
   args: string[],
   env?: Record<string, string>
@@ -87,7 +113,7 @@ export class AgentDBMemory {
         '768',
         '--preset',
         'medium',
-      ]);
+      ], AGENTDB_ENV(this.dbPath));
 
       if (code === 0 || stderr.includes('already exists')) {
         console.error('AgentDB initialized:', this.dbPath);
@@ -124,7 +150,7 @@ export class AgentDBMemory {
           episode.success.toString(),
           episode.outcome || '',
         ],
-        { AGENTDB_PATH: this.dbPath }
+        AGENTDB_ENV(this.dbPath)
       );
 
       if (code !== 0) {
@@ -171,7 +197,7 @@ export class AgentDBMemory {
 
     try {
       const { stdout, code, stderr } = await spawnAsync('npx', args, {
-        AGENTDB_PATH: this.dbPath,
+        ...AGENTDB_ENV(this.dbPath),
       });
 
       if (code !== 0) {
@@ -228,7 +254,7 @@ export class AgentDBMemory {
 
     try {
       const { stdout, code, stderr } = await spawnAsync('npx', args, {
-        AGENTDB_PATH: this.dbPath,
+        ...AGENTDB_ENV(this.dbPath),
       });
 
       if (code !== 0) {
@@ -276,7 +302,7 @@ export class AgentDBMemory {
           timeWindowDays.toString(),
           'true',
         ],
-        { AGENTDB_PATH: this.dbPath }
+        AGENTDB_ENV(this.dbPath)
       );
 
       if (code !== 0) {
@@ -296,7 +322,7 @@ export class AgentDBMemory {
 
     try {
       const { stdout, code, stderr } = await spawnAsync('npx', ['agentdb', 'db', 'stats'], {
-        AGENTDB_PATH: this.dbPath,
+        ...AGENTDB_ENV(this.dbPath),
       });
 
       if (code !== 0) {

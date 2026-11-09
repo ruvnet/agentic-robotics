@@ -16,7 +16,25 @@ import { spawn } from 'child_process';
  * that passes arguments as an array, preventing command injection through
  * user-supplied strings such as query, taskName, outcome, strategy, etc.
  */
+// The sql.js backend rewrites the whole file and refuses to save over a
+// concurrent change, so CLI calls against one database are run one at a time.
+const dbQueues = new Map<string, Promise<unknown>>();
+
 function spawnAsync(
+  cmd: string,
+  args: string[],
+  env?: Record<string, string>
+): Promise<{ stdout: string; stderr: string }> {
+  const key = env?.AGENTDB_PATH;
+  if (!key) return spawnOnce(cmd, args, env);
+  const run = (dbQueues.get(key) ?? Promise.resolve())
+    .catch(() => undefined)
+    .then(() => spawnOnce(cmd, args, env));
+  dbQueues.set(key, run);
+  return run;
+}
+
+function spawnOnce(
   cmd: string,
   args: string[],
   env?: Record<string, string>
@@ -43,7 +61,13 @@ function spawnAsync(
   });
 }
 
-const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({ AGENTDB_PATH: dbPath });
+// agentdb 3.x CLI calls `db.save()`, which only the sql.js backend implements;
+// with native better-sqlite3 the write lands but the command exits 1. Force the
+// sql.js backend so every CLI call reports its real status.
+const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({
+  AGENTDB_PATH: dbPath,
+  AGENTDB_FORCE_SQLJS: '1',
+});
 
 export interface Episode {
   sessionId: string;
@@ -116,7 +140,8 @@ export class EnhancedAgentDBMemory {
       // SECURITY: dbPath passed as argument, not interpolated into shell string.
       const { stdout, stderr } = await spawnAsync(
         'npx',
-        ['agentdb', 'init', this.dbPath, '--dimension', '768', '--preset', 'high-performance', '--enable-cache']
+        ['agentdb', 'init', this.dbPath, '--dimension', '768', '--preset', 'high-performance', '--enable-cache'],
+        AGENTDB_ENV(this.dbPath)
       );
 
       console.error('✅ AgentDB initialized:', this.dbPath);
