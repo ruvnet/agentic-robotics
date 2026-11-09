@@ -4,17 +4,21 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "npm/core",
+    "npm/cli",
+    "npm/mcp",
+    "npm/agentic-robotics",
+    "examples/self-learning"
   ],
   "scripts": {
     "build": "npm run build:rust && npm run build:packages",
     "build:rust": "cargo build --release",
-    "build:packages": "npm run build --workspaces",
+    "build:packages": "npm run build --workspaces --if-present",
     "test": "npm run test:rust && npm run test:packages",
     "test:rust": "cargo test",
-    "test:packages": "npm run test --workspaces",
+    "test:packages": "npm run test --workspaces --if-present -- --run",
     "bench": "cargo bench",
-    "dev": "npm run dev --workspace=@ros3/mcp-server"
+    "dev": "npm run dev --workspace=@agentic-robotics/mcp"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -23,15 +27,13 @@
     "vitest": "^4.1.7"
   },
   "dependencies": {
-    "agentdb": "^1.1.2",
-    "agentic-flow": "^1.9.0",
+    "agentdb": "^3.7.2",
+    "agentic-flow": "^3.4.3",
     "@modelcontextprotocol/sdk": ">=1.25.4"
   },
   "overrides": {
-    "agentdb": ">=1.1.2",
-    "agentic-flow": ">=1.10.3",
-    "@modelcontextprotocol/sdk": ">=1.25.4",
-    "vitest": ">=4.1.7",
+    "@modelcontextprotocol/sdk": "$@modelcontextprotocol/sdk",
+    "vitest": "$vitest",
     "protobufjs": ">=7.4.0"
   },
   "engines": {
