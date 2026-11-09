@@ -16,13 +16,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const { version } = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
+
 const program = new Command();
 
 // Version and description
 program
   .name('agentic-learn')
   .description('Self-learning optimization system for robotic agents')
-  .version('1.0.0');
+  .version(version);
 
 // Validate command
 program

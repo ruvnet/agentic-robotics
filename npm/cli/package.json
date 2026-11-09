@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/cli",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "CLI tools for agentic robotics framework",
   "bin": {
     "agentic-robotics": "./bin/cli.js"
@@ -33,7 +33,7 @@
     "README.md"
   ],
   "peerDependencies": {
-    "agentic-flow": "^2.0.14 || ^3.0.0"
+    "agentic-flow": "^2.0.14 || ^3.4.3"
   },
   "peerDependenciesMeta": {
     "agentic-flow": {

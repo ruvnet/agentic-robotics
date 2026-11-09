@@ -11,7 +11,7 @@ This package contains the precompiled native binary for the agentic-robotics fra
 
 - **OS**: Linux
 - **Architecture**: x86_64 (x64)
-- **C Library**: GNU libc (glibc)
+- **C Library**: GNU libc (glibc) 2.34 or newer
 
 ## Installation
 
@@ -29,19 +29,21 @@ npm install @agentic-robotics/linux-x64-gnu
 
 ## Technical Details
 
-- **Binary Size**: ~850 KB (optimized)
+- **Binary Size**: ~800 KB (optimized)
 - **Rust Version**: 1.83+
 - **NAPI Version**: 3+
 - **Build Type**: Release (optimized)
 
 ## Compatibility
 
-Compatible with:
-- Ubuntu 18.04+
-- Debian 10+
-- CentOS 7+
-- Fedora 30+
-- Any Linux distribution with glibc 2.17+
+Requires glibc 2.34 or newer (the binary links `GLIBC_2.34` symbols), for example:
+- Ubuntu 22.04+
+- Debian 12+
+- RHEL / Rocky / AlmaLinux 9+
+- Fedora 35+
+
+Older distributions (Ubuntu 20.04, Debian 11, CentOS 7, RHEL 8) fail to load the binary with a `GLIBC_2.34 not found` error.
+musl-based distributions such as Alpine are not supported.
 
 ## Homepage
 

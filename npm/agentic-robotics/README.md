@@ -94,10 +94,10 @@ The meta-package has no code of its own: the `agentic-robotics` command comes fr
 
 | Package | Platform | npm | Status |
 |---------|----------|-----|--------|
-| **[@agentic-robotics/linux-x64-gnu](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu)** | Linux x64 (Ubuntu, Debian, CentOS, Fedora) | [![npm](https://img.shields.io/npm/v/@agentic-robotics/linux-x64-gnu)](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu) | ✅ Published |
-| **@agentic-robotics/linux-arm64-gnu** | Linux ARM64 (Raspberry Pi, Jetson) | - | 🚧 Coming soon |
-| **@agentic-robotics/darwin-x64** | macOS Intel | - | 🚧 Coming soon |
-| **@agentic-robotics/darwin-arm64** | macOS Apple Silicon | - | 🚧 Coming soon |
+| **[@agentic-robotics/linux-x64-gnu](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu)** | Linux x64, glibc 2.34+ (Ubuntu 22.04+, Debian 12+, RHEL 9+, Fedora 35+) | [![npm](https://img.shields.io/npm/v/@agentic-robotics/linux-x64-gnu)](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu) | ✅ Published |
+| **[@agentic-robotics/linux-arm64-gnu](https://www.npmjs.com/package/@agentic-robotics/linux-arm64-gnu)** | Linux ARM64, glibc 2.34+ (Raspberry Pi OS 12+, Jetson with Ubuntu 22.04+) | [![npm](https://img.shields.io/npm/v/@agentic-robotics/linux-arm64-gnu)](https://www.npmjs.com/package/@agentic-robotics/linux-arm64-gnu) | ✅ Published |
+| **[@agentic-robotics/darwin-x64](https://www.npmjs.com/package/@agentic-robotics/darwin-x64)** | macOS Intel | [![npm](https://img.shields.io/npm/v/@agentic-robotics/darwin-x64)](https://www.npmjs.com/package/@agentic-robotics/darwin-x64) | ✅ Published |
+| **[@agentic-robotics/darwin-arm64](https://www.npmjs.com/package/@agentic-robotics/darwin-arm64)** | macOS Apple Silicon | [![npm](https://img.shields.io/npm/v/@agentic-robotics/darwin-arm64)](https://www.npmjs.com/package/@agentic-robotics/darwin-arm64) | ✅ Published |
 
 ### Rust Crates (For Advanced Users)
 
@@ -1151,7 +1151,7 @@ Agentic Robotics is built on the shoulders of giants:
 - 🌐 **Homepage**: [ruv.io/agentic-robotics](https://ruv.io/agentic-robotics)
 - 📦 **npm**: [npmjs.com/package/agentic-robotics](https://www.npmjs.com/package/agentic-robotics)
 - 🐙 **GitHub**: [@ruvnet](https://github.com/ruvnet)
-- 🦀 **crates.io**: Coming soon!
+- 🦀 **crates.io**: [crates.io/crates/agentic-robotics-core](https://crates.io/crates/agentic-robotics-core)
 
 ### Community Stats
 

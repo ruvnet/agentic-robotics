@@ -328,7 +328,7 @@ Database Size: ${(stats.dbSize / 1024 / 1024).toFixed(2)}MB`;
 
   async optimizeMemory(): Promise<string> {
     await this.memory.optimize();
-    return 'Database optimized (vacuum, reindex, vector optimization complete)';
+    return 'Database optimized (reindex and vacuum)';
   }
 
   // ===== ORCHESTRATION TOOLS (agentic-flow) =====
