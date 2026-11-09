@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use ros3_rt::{LatencyTracker, ROS3Executor, Priority, Deadline};
+use agentic_robotics_rt::{LatencyTracker, ROS3Executor};
 use std::time::Duration;
 
 fn benchmark_latency_tracking(c: &mut Criterion) {

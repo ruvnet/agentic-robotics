@@ -1,0 +1,27 @@
+# cargo-deny configuration. CI runs `cargo deny check advisories`.
+#
+# Every ignore below is an advisory with no fixed release reachable from this
+# workspace: each comes in transitively through zenoh, rustdds or napi, and the
+# parent crate pins the affected version. Re-check them when those parents are
+# bumped, and drop an entry as soon as a fix is reachable.
+
+[graph]
+all-features = false
+
+[advisories]
+version = 2
+yanked = "deny"
+ignore = [
+    # rsa 0.9 Marvin timing side channel; fix is rsa 0.10, pinned by zenoh-transport.
+    { id = "RUSTSEC-2023-0071", reason = "rsa 0.9 pinned by zenoh-transport; no fixed 0.9.x" },
+    # net2 deprecated; reached via rustdds -> mio-extras -> mio 0.6.
+    { id = "RUSTSEC-2020-0016", reason = "net2 unmaintained, pulled by rustdds via mio 0.6" },
+    # paste unmaintained; reached via rustdds -> cdr-encoding.
+    { id = "RUSTSEC-2024-0436", reason = "paste unmaintained, pulled by rustdds via cdr-encoding" },
+    # pin-utils unmaintained; reached via futures-util (napi, rustdds).
+    { id = "RUSTSEC-2026-0441", reason = "pin-utils unmaintained, pulled by futures-util" },
+    # rustls-pemfile unmaintained; reached via zenoh-link-commons.
+    { id = "RUSTSEC-2025-0134", reason = "rustls-pemfile unmaintained, pulled by zenoh-link-commons" },
+    # unsafe-libyaml unmaintained; reached via zenoh-config -> serde_yaml.
+    { id = "RUSTSEC-2024-0449", reason = "unsafe-libyaml unmaintained, pulled by zenoh-config via serde_yaml" },
+]

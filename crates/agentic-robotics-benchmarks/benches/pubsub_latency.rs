@@ -1,19 +1,33 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
-use ros3_core::message::RobotState;
-use ros3_core::publisher::Publisher;
-use ros3_core::subscriber::Subscriber;
-use ros3_core::serialization::Serializer;
-use std::time::{Duration, Instant};
+use agentic_robotics_core::message::RobotState;
+use agentic_robotics_core::publisher::Publisher;
+use agentic_robotics_core::serialization::Format;
+use agentic_robotics_core::subscriber::Subscriber;
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use std::time::Instant;
+use tokio::runtime::Runtime;
+
+fn runtime() -> Runtime {
+    tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap()
+}
+
+fn message() -> RobotState {
+    RobotState {
+        position: [1.0, 2.0, 3.0],
+        velocity: [0.1, 0.2, 0.3],
+        timestamp: 123456789,
+    }
+}
 
 fn benchmark_publisher_creation(c: &mut Criterion) {
     let mut group = c.benchmark_group("Publisher Creation");
 
     group.bench_function("create_publisher", |b| {
         b.iter(|| {
-            let publisher = Publisher::<RobotState>::new(
-                black_box("test_topic".to_string()),
-                Serializer::Cdr,
-            );
+            let publisher =
+                Publisher::<RobotState>::with_format(black_box("test_topic"), Format::Cdr);
             black_box(publisher)
         })
     });
@@ -26,10 +40,7 @@ fn benchmark_subscriber_creation(c: &mut Criterion) {
 
     group.bench_function("create_subscriber", |b| {
         b.iter(|| {
-            let subscriber = Subscriber::<RobotState>::new(
-                black_box("test_topic".to_string()),
-                Serializer::Cdr,
-            );
+            let subscriber = Subscriber::<RobotState>::new(black_box("test_topic"));
             black_box(subscriber)
         })
     });
@@ -40,17 +51,13 @@ fn benchmark_subscriber_creation(c: &mut Criterion) {
 fn benchmark_publish_latency(c: &mut Criterion) {
     let mut group = c.benchmark_group("Publish Latency");
 
-    let publisher = Publisher::<RobotState>::new("bench_topic".to_string(), Serializer::Cdr);
-
-    let message = RobotState {
-        position: [1.0, 2.0, 3.0],
-        velocity: [0.1, 0.2, 0.3],
-        timestamp: 123456789,
-    };
+    let rt = runtime();
+    let publisher = Publisher::<RobotState>::with_format("bench_topic", Format::Cdr);
+    let message = message();
 
     group.bench_function("single_publish", |b| {
         b.iter(|| {
-            let result = futures::executor::block_on(publisher.publish(black_box(&message)));
+            let result = rt.block_on(publisher.publish(black_box(&message)));
             black_box(result)
         })
     });
@@ -61,15 +68,10 @@ fn benchmark_publish_latency(c: &mut Criterion) {
 fn benchmark_publish_throughput(c: &mut Criterion) {
     let mut group = c.benchmark_group("Publish Throughput");
 
-    let publisher = Publisher::<RobotState>::new("bench_topic".to_string(), Serializer::Cdr);
+    let rt = runtime();
+    let publisher = Publisher::<RobotState>::with_format("bench_topic", Format::Cdr);
+    let message = message();
 
-    let message = RobotState {
-        position: [1.0, 2.0, 3.0],
-        velocity: [0.1, 0.2, 0.3],
-        timestamp: 123456789,
-    };
-
-    // Benchmark burst publishing
     for batch_size in [10, 100, 1000].iter() {
         group.bench_with_input(
             BenchmarkId::new("batch_publish", batch_size),
@@ -77,7 +79,7 @@ fn benchmark_publish_throughput(c: &mut Criterion) {
             |b, &size| {
                 b.iter(|| {
                     for _ in 0..size {
-                        futures::executor::block_on(publisher.publish(black_box(&message))).ok();
+                        rt.block_on(publisher.publish(black_box(&message))).ok();
                     }
                 })
             },
@@ -89,13 +91,14 @@ fn benchmark_publish_throughput(c: &mut Criterion) {
 
 fn benchmark_end_to_end_latency(c: &mut Criterion) {
     let mut group = c.benchmark_group("End-to-End Latency");
-    group.sample_size(100); // Reduce sample size for async operations
+    group.sample_size(100);
 
-    // Measure full publish-subscribe round trip
+    let rt = runtime();
+
     group.bench_function("pubsub_roundtrip", |b| {
         b.iter_custom(|iters| {
-            let publisher = Publisher::<RobotState>::new("latency_topic".to_string(), Serializer::Cdr);
-            let _subscriber = Subscriber::<RobotState>::new("latency_topic".to_string(), Serializer::Cdr);
+            let publisher = Publisher::<RobotState>::with_format("latency_topic", Format::Cdr);
+            let _subscriber = Subscriber::<RobotState>::new("latency_topic");
 
             let start = Instant::now();
 
@@ -106,7 +109,7 @@ fn benchmark_end_to_end_latency(c: &mut Criterion) {
                     timestamp: i as i64,
                 };
 
-                futures::executor::block_on(publisher.publish(&message)).ok();
+                rt.block_on(publisher.publish(&message)).ok();
             }
 
             start.elapsed()
@@ -119,25 +122,20 @@ fn benchmark_end_to_end_latency(c: &mut Criterion) {
 fn benchmark_serializer_comparison(c: &mut Criterion) {
     let mut group = c.benchmark_group("Serializer Comparison");
 
-    let message = RobotState {
-        position: [1.0, 2.0, 3.0],
-        velocity: [0.1, 0.2, 0.3],
-        timestamp: 123456789,
-    };
+    let rt = runtime();
+    let message = message();
 
-    // CDR serializer
-    let cdr_publisher = Publisher::<RobotState>::new("cdr_topic".to_string(), Serializer::Cdr);
+    let cdr_publisher = Publisher::<RobotState>::with_format("cdr_topic", Format::Cdr);
     group.bench_function("CDR_publish", |b| {
         b.iter(|| {
-            futures::executor::block_on(cdr_publisher.publish(black_box(&message))).ok();
+            rt.block_on(cdr_publisher.publish(black_box(&message))).ok();
         })
     });
 
-    // JSON serializer
-    let json_publisher = Publisher::<RobotState>::new("json_topic".to_string(), Serializer::Json);
+    let json_publisher = Publisher::<RobotState>::with_format("json_topic", Format::Json);
     group.bench_function("JSON_publish", |b| {
         b.iter(|| {
-            futures::executor::block_on(json_publisher.publish(black_box(&message))).ok();
+            rt.block_on(json_publisher.publish(black_box(&message))).ok();
         })
     });
 
@@ -148,6 +146,8 @@ fn benchmark_concurrent_publishers(c: &mut Criterion) {
     let mut group = c.benchmark_group("Concurrent Publishers");
     group.sample_size(50);
 
+    let rt = runtime();
+
     for num_publishers in [1, 2, 4, 8].iter() {
         group.bench_with_input(
             BenchmarkId::new("concurrent", num_publishers),
@@ -156,21 +156,14 @@ fn benchmark_concurrent_publishers(c: &mut Criterion) {
                 b.iter(|| {
                     let publishers: Vec<_> = (0..count)
                         .map(|i| {
-                            Publisher::<RobotState>::new(
-                                format!("topic_{}", i),
-                                Serializer::Cdr,
-                            )
+                            Publisher::<RobotState>::with_format(format!("topic_{}", i), Format::Cdr)
                         })
                         .collect();
 
-                    let message = RobotState {
-                        position: [1.0, 2.0, 3.0],
-                        velocity: [0.1, 0.2, 0.3],
-                        timestamp: 123456789,
-                    };
+                    let message = message();
 
                     for publisher in &publishers {
-                        futures::executor::block_on(publisher.publish(&message)).ok();
+                        rt.block_on(publisher.publish(&message)).ok();
                     }
                 })
             },
