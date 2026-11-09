@@ -7,7 +7,7 @@
 
 **Node.js/TypeScript bindings for Agentic Robotics**
 
-Part of the [Agentic Robotics](https://github.com/ruvnet/vibecast) framework - high-performance robotics middleware with ROS2 compatibility.
+Part of the [Agentic Robotics](https://github.com/ruvnet/agentic-robotics) framework - high-performance robotics middleware with ROS2 compatibility.
 
 ## Features
 
@@ -250,8 +250,8 @@ Still significantly faster than traditional ROS2 Node.js bindings!
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/vibecast
-cd vibecast
+git clone https://github.com/ruvnet/agentic-robotics
+cd agentic-robotics
 
 # Build Node.js addon
 npm install
@@ -330,7 +330,7 @@ at your option.
 - **Homepage**: [ruv.io](https://ruv.io)
 - **Documentation**: [docs.rs/agentic-robotics-node](https://docs.rs/agentic-robotics-node)
 - **npm Package**: [npmjs.com/package/agentic-robotics](https://www.npmjs.com/package/agentic-robotics)
-- **Repository**: [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
+- **Repository**: [github.com/ruvnet/agentic-robotics](https://github.com/ruvnet/agentic-robotics)
 
 ---
 

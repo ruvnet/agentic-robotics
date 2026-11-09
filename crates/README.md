@@ -5,7 +5,7 @@
 [![Crates.io](https://img.shields.io/crates/v/agentic-robotics-core.svg)](https://crates.io/crates/agentic-robotics-core)
 [![Documentation](https://docs.rs/agentic-robotics-core/badge.svg)](https://docs.rs/agentic-robotics-core)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ruvnet/vibecast/ci.yml)](https://github.com/ruvnet/vibecast/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ruvnet/agentic-robotics/ci.yml)](https://github.com/ruvnet/agentic-robotics/actions)
 [![Rust Version](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org)
 [![ROS2 Compatible](https://img.shields.io/badge/ROS2-Compatible-green.svg)](https://www.ros.org)
 
@@ -339,8 +339,8 @@ pub.publish(&msg).await?;
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/vibecast
-cd vibecast
+git clone https://github.com/ruvnet/agentic-robotics
+cd agentic-robotics
 
 # Build all crates
 cargo build --release
@@ -419,8 +419,8 @@ at your option.
 
 - **Website**: [ruv.io](https://ruv.io)
 - **Email**: hello@ruv.io
-- **GitHub**: [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
-- **Issues**: [github.com/ruvnet/vibecast/issues](https://github.com/ruvnet/vibecast/issues)
+- **GitHub**: [github.com/ruvnet/agentic-robotics](https://github.com/ruvnet/agentic-robotics)
+- **Issues**: [github.com/ruvnet/agentic-robotics/issues](https://github.com/ruvnet/agentic-robotics/issues)
 
 ---
 

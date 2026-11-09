@@ -6,7 +6,7 @@
 
 **Embedded systems support for Agentic Robotics**
 
-Part of the [Agentic Robotics](https://github.com/ruvnet/vibecast) framework - high-performance robotics middleware with ROS2 compatibility.
+Part of the [Agentic Robotics](https://github.com/ruvnet/agentic-robotics) framework - high-performance robotics middleware with ROS2 compatibility.
 
 ## Features
 
@@ -47,7 +47,7 @@ at your option.
 
 - **Homepage**: [ruv.io](https://ruv.io)
 - **Documentation**: [docs.rs/agentic-robotics-embedded](https://docs.rs/agentic-robotics-embedded)
-- **Repository**: [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
+- **Repository**: [github.com/ruvnet/agentic-robotics](https://github.com/ruvnet/agentic-robotics)
 
 ---
 

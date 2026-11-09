@@ -6,7 +6,7 @@
 
 **Real-time executor with priority scheduling for Agentic Robotics**
 
-Part of the [Agentic Robotics](https://github.com/ruvnet/vibecast) framework - high-performance robotics middleware with ROS2 compatibility.
+Part of the [Agentic Robotics](https://github.com/ruvnet/agentic-robotics) framework - high-performance robotics middleware with ROS2 compatibility.
 
 ## Features
 
@@ -386,7 +386,7 @@ at your option.
 
 - **Homepage**: [ruv.io](https://ruv.io)
 - **Documentation**: [docs.rs/agentic-robotics-rt](https://docs.rs/agentic-robotics-rt)
-- **Repository**: [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
+- **Repository**: [github.com/ruvnet/agentic-robotics](https://github.com/ruvnet/agentic-robotics)
 - **Performance Report**: [PERFORMANCE_REPORT.md](../../PERFORMANCE_REPORT.md)
 
 ---

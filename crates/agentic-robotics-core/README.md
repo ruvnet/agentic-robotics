@@ -7,7 +7,7 @@
 
 **The fastest robotics middleware for Rust - 10x faster than ROS2, 100% compatible**
 
-Part of the [Agentic Robotics](https://github.com/ruvnet/vibecast) framework - high-performance robotics middleware built for autonomous agents and modern robotic systems.
+Part of the [Agentic Robotics](https://github.com/ruvnet/agentic-robotics) framework - high-performance robotics middleware built for autonomous agents and modern robotic systems.
 
 ---
 
@@ -726,7 +726,7 @@ mod tests {
 
 ## 📚 Examples
 
-Complete working examples in the [repository](https://github.com/ruvnet/vibecast/tree/main/examples):
+Complete working examples in the [repository](https://github.com/ruvnet/agentic-robotics/tree/main/examples):
 
 - **01-hello-robot.ts** - Basic pub/sub (10s)
 - **02-autonomous-navigator.ts** - A* pathfinding with obstacle avoidance (30s)
@@ -760,7 +760,7 @@ at your option.
 
 - **Homepage**: [ruv.io](https://ruv.io)
 - **Documentation**: [docs.rs/agentic-robotics-core](https://docs.rs/agentic-robotics-core)
-- **Repository**: [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
+- **Repository**: [github.com/ruvnet/agentic-robotics](https://github.com/ruvnet/agentic-robotics)
 - **Performance Report**: [PERFORMANCE_REPORT.md](../../PERFORMANCE_REPORT.md)
 - **Optimization Guide**: [OPTIMIZATIONS.md](../../OPTIMIZATIONS.md)
 - **Examples**: [examples/](../../examples)
@@ -778,6 +778,6 @@ at your option.
 
 *Making robots faster, safer, and more capable - one nanosecond at a time.*
 
-[Get Started](#-installation) · [Read Tutorial](#-tutorial-building-your-first-robot-node) · [View Examples](../../examples) · [Join Community](https://github.com/ruvnet/vibecast/discussions)
+[Get Started](#-installation) · [Read Tutorial](#-tutorial-building-your-first-robot-node) · [View Examples](../../examples) · [Join Community](https://github.com/ruvnet/agentic-robotics/discussions)
 
 </div>
