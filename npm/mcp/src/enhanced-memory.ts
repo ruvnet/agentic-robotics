@@ -1,73 +1,26 @@
 /**
  * Enhanced AgentDB Memory Integration
  *
- * Uses ALL AgentDB features:
- * - Reflexion memory with self-critique
- * - Skill library with semantic search
- * - Causal reasoning
- * - Automated learning
- * - Performance optimization
+ * Reflexion memory with self-critique, a skill library with semantic search,
+ * context synthesis and performance metrics.
+ *
+ * The optional `agentdb` package is imported lazily and driven in-process
+ * (see agentdb-engine.ts). Only when it cannot be imported does this class
+ * fall back to spawning the agentdb CLI (see enhanced-memory-cli.ts).
  */
 
-import { spawn } from 'child_process';
-
-/**
- * SECURITY: Replaces exec/execAsync (shell=true) with a spawn-based helper
- * that passes arguments as an array, preventing command injection through
- * user-supplied strings such as query, taskName, outcome, strategy, etc.
- */
-// The sql.js backend rewrites the whole file and refuses to save over a
-// concurrent change, so CLI calls against one database are run one at a time.
-const dbQueues = new Map<string, Promise<unknown>>();
-
-function spawnAsync(
-  cmd: string,
-  args: string[],
-  env?: Record<string, string>
-): Promise<{ stdout: string; stderr: string }> {
-  const key = env?.AGENTDB_PATH;
-  if (!key) return spawnOnce(cmd, args, env);
-  const run = (dbQueues.get(key) ?? Promise.resolve())
-    .catch(() => undefined)
-    .then(() => spawnOnce(cmd, args, env));
-  dbQueues.set(key, run);
-  return run;
-}
-
-function spawnOnce(
-  cmd: string,
-  args: string[],
-  env?: Record<string, string>
-): Promise<{ stdout: string; stderr: string }> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, {
-      env: { ...process.env, ...env },
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    let stdout = '';
-    let stderr = '';
-    child.stdout.on('data', (d: Buffer) => { stdout += d.toString(); });
-    child.stderr.on('data', (d: Buffer) => { stderr += d.toString(); });
-    child.on('close', (code) => {
-      if (code !== 0 && code !== null) {
-        const err = new Error(stderr || `Process exited with code ${code}`);
-        (err as any).code = code;
-        reject(err);
-      } else {
-        resolve({ stdout, stderr });
-      }
-    });
-    child.on('error', reject);
-  });
-}
-
-// agentdb 3.x CLI calls `db.save()`, which only the sql.js backend implements;
-// with native better-sqlite3 the write lands but the command exits 1. Force the
-// sql.js backend so every CLI call reports its real status.
-const AGENTDB_ENV = (dbPath: string): Record<string, string> => ({
-  AGENTDB_PATH: dbPath,
-  AGENTDB_FORCE_SQLJS: '1',
-});
+import { statSync } from 'fs';
+import { InProcessAgentDB, type StoredEpisode } from './agentdb-engine.js';
+import {
+  cliConsolidate,
+  cliCounts,
+  cliInit,
+  cliOptimize,
+  cliQuery,
+  cliRetrieve,
+  cliSearchSkills,
+  cliStoreEpisode,
+} from './enhanced-memory-cli.js';
 
 export interface Episode {
   sessionId: string;
@@ -77,8 +30,8 @@ export interface Episode {
   outcome: string;
   strategy?: string;
   metadata?: Record<string, any>;
-  reasoning?: string;  // NEW: Causal reasoning
-  critique?: string;   // NEW: Self-critique
+  reasoning?: string;  // Causal reasoning
+  critique?: string;   // Self-critique
 }
 
 export interface Memory {
@@ -111,17 +64,37 @@ export interface MemoryStats {
   dbSize: number;
 }
 
+type SortBy = 'success_rate' | 'avg_reward' | 'num_attempts' | 'last_used';
+
+const SORT_KEYS: Record<SortBy, keyof Skill> = {
+  success_rate: 'successRate',
+  avg_reward: 'avgReward',
+  num_attempts: 'numAttempts',
+  last_used: 'lastUsed',
+};
+
+function toMemory(e: StoredEpisode): Memory {
+  return {
+    task: e.task,
+    confidence: e.reward,
+    success: e.success,
+    outcome: e.critique,
+    strategy: e.metadata.strategy,
+    timestamp: e.ts,
+    reasoning: e.metadata.reasoning,
+    critique: e.metadata.selfCritique,
+    similarity: e.similarity,
+  };
+}
+
 export class EnhancedAgentDBMemory {
   private dbPath: string;
   private initialized: boolean = false;
-  private performanceMetrics: {
-    retrievalTimes: number[];
-    storeTimes: number[];
-    cacheHits: number;
-    cacheMisses: number;
-  } = {
-    retrievalTimes: [],
-    storeTimes: [],
+  /** In-process agentdb; null means the CLI fallback is in use. */
+  private engine: InProcessAgentDB | null = null;
+  private performanceMetrics = {
+    retrievalTimes: [] as number[],
+    storeTimes: [] as number[],
     cacheHits: 0,
     cacheMisses: 0,
   };
@@ -130,62 +103,51 @@ export class EnhancedAgentDBMemory {
     this.dbPath = dbPath;
   }
 
+  /** True when agentdb runs in this process, false when the CLI fallback is in use. */
+  get inProcess(): boolean {
+    return this.engine !== null;
+  }
+
   async initialize(): Promise<void> {
     if (this.initialized) return;
 
     const startTime = Date.now();
-
-    try {
-      // Initialize with optimized settings.
-      // SECURITY: dbPath passed as argument, not interpolated into shell string.
-      const { stdout, stderr } = await spawnAsync(
-        'npx',
-        ['agentdb', 'init', this.dbPath, '--dimension', '768', '--preset', 'high-performance', '--enable-cache'],
-        AGENTDB_ENV(this.dbPath)
-      );
-
-      console.error('✅ AgentDB initialized:', this.dbPath);
-      console.error(`⚡ Initialization time: ${Date.now() - startTime}ms`);
-      this.initialized = true;
-    } catch (error: any) {
-      if (!error.message.includes('already exists')) {
-        console.error('⚠️ AgentDB initialization warning:', error.message);
-      }
-      this.initialized = true;
+    this.engine = await InProcessAgentDB.open(this.dbPath);
+    if (!this.engine) {
+      await cliInit(this.dbPath);
     }
+    console.error(`✅ AgentDB initialized (${this.engine ? 'in-process' : 'CLI'}):`, this.dbPath);
+    console.error(`⚡ Initialization time: ${Date.now() - startTime}ms`);
+    this.initialized = true;
   }
 
   /**
-   * Store episode with full context and self-critique
+   * Store episode with full context and self-critique.
+   *
+   * In-process, `outcome` is stored as agentdb's critique (as AgentDBMemory
+   * does, so both classes read one database the same way); strategy,
+   * reasoning and the self-critique go into the episode metadata.
    */
   async storeEpisode(episode: Episode): Promise<void> {
     const startTime = Date.now();
 
-    // Generate self-critique if success
     let critique = episode.critique;
     if (episode.success && !critique) {
-      critique = await this.generateCritique(episode);
+      critique = this.generateCritique(episode);
     }
 
-    // SECURITY: Build an argument array — no shell interpolation of user data.
-    const args = [
-      'agentdb', 'reflexion', 'store',
-      episode.sessionId,
-      episode.taskName,
-      episode.confidence.toString(),
-      episode.success.toString(),
-      episode.outcome || '',
-    ];
-    if (episode.strategy) { args.push('--strategy', episode.strategy); }
-    if (episode.reasoning) { args.push('--reasoning', episode.reasoning); }
-    if (critique) { args.push('--critique', critique); }
-
     try {
-      await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
+      if (this.engine) {
+        const metadata: Record<string, any> = { ...episode.metadata };
+        if (episode.reasoning) metadata.reasoning = episode.reasoning;
+        if (critique) metadata.selfCritique = critique;
+        await this.engine.storeEpisode({ ...episode, metadata });
+      } else {
+        await cliStoreEpisode(this.dbPath, episode, critique);
+      }
 
       const storeTime = Date.now() - startTime;
       this.performanceMetrics.storeTimes.push(storeTime);
-
       console.error(`💾 Stored episode: ${episode.taskName} (${storeTime}ms)`);
     } catch (error: any) {
       console.error('❌ Error storing episode:', error.message);
@@ -194,7 +156,8 @@ export class EnhancedAgentDBMemory {
   }
 
   /**
-   * Retrieve memories with semantic search and causal reasoning
+   * Retrieve memories with semantic search.
+   * `synthesizeContext` and `enableReasoning` only affect the CLI fallback.
    */
   async retrieveMemories(
     query: string,
@@ -204,46 +167,33 @@ export class EnhancedAgentDBMemory {
       onlySuccesses?: boolean;
       onlyFailures?: boolean;
       synthesizeContext?: boolean;
-      enableReasoning?: boolean;  // NEW
-      timeWindow?: number;        // NEW: in days
+      enableReasoning?: boolean;
+      timeWindow?: number;        // in days
     } = {}
   ): Promise<Memory[]> {
-    const startTime = Date.now();
-
-    // SECURITY: Build argument array — query and option values not shell-interpolated.
-    const args = ['agentdb', 'reflexion', 'retrieve', query, '--k', String(k)];
-    if (options.minReward !== undefined) { args.push('--min-reward', String(options.minReward)); }
-    if (options.onlySuccesses) { args.push('--only-successes'); }
-    if (options.onlyFailures) { args.push('--only-failures'); }
-    if (options.synthesizeContext) { args.push('--synthesize-context'); }
-    if (options.enableReasoning) { args.push('--enable-causal-reasoning'); }
-    if (options.timeWindow) { args.push('--time-window', String(options.timeWindow)); }
+    const startTime = performance.now();
 
     try {
-      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
+      const memories = this.engine
+        ? (await this.engine.retrieveEpisodes(query, k, {
+            minReward: options.minReward,
+            onlySuccesses: options.onlySuccesses,
+            onlyFailures: options.onlyFailures,
+            timeWindowDays: options.timeWindow,
+          })).map(toMemory)
+        : await cliRetrieve(this.dbPath, query, k, options);
 
-      const retrievalTime = Date.now() - startTime;
+      const retrievalTime = performance.now() - startTime;
       this.performanceMetrics.retrievalTimes.push(retrievalTime);
-
-      // Check if sub-millisecond (cache hit)
+      // Sub-millisecond retrievals are counted as cache hits.
       if (retrievalTime < 1) {
         this.performanceMetrics.cacheHits++;
       } else {
         this.performanceMetrics.cacheMisses++;
       }
 
-      const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('[') || line.startsWith('{'));
-
-      if (jsonLine) {
-        const data = JSON.parse(jsonLine);
-        const memories = Array.isArray(data) ? data : [data];
-
-        console.error(`⚡ Retrieved ${memories.length} memories in ${retrievalTime}ms`);
-        return memories;
-      }
-
-      return [];
+      console.error(`⚡ Retrieved ${memories.length} memories in ${retrievalTime.toFixed(2)}ms`);
+      return memories;
     } catch (error: any) {
       console.error('❌ Error retrieving memories:', error.message);
       return [];
@@ -251,7 +201,9 @@ export class EnhancedAgentDBMemory {
   }
 
   /**
-   * Query with full context synthesis and reasoning
+   * Query with context synthesis. In-process, `context` is agentdb's
+   * ContextSynthesizer summary and `reasoning` its key insights and
+   * recommendations. `domain` has no in-process equivalent.
    */
   async queryWithContext(
     query: string,
@@ -259,45 +211,32 @@ export class EnhancedAgentDBMemory {
       k?: number;
       minConfidence?: number;
       domain?: string;
-      synthesizeReasoning?: boolean;  // NEW
+      synthesizeReasoning?: boolean;
     } = {}
   ): Promise<{ memories: Memory[]; context?: string; reasoning?: string }> {
-    const startTime = Date.now();
+    const startTime = performance.now();
     const { k = 5, minConfidence = 0.0, domain, synthesizeReasoning = true } = options;
 
-    // SECURITY: Argument array — query, domain, and numeric options not shell-interpolated.
-    const args = [
-      'agentdb', 'query',
-      '--query', query,
-      '--k', String(k),
-      '--min-confidence', String(minConfidence),
-      '--synthesize-context',
-      '--format', 'json',
-    ];
-    if (domain) { args.push('--domain', domain); }
-    if (synthesizeReasoning) { args.push('--enable-causal-reasoning'); }
-
     try {
-      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
-
-      const retrievalTime = Date.now() - startTime;
-      this.performanceMetrics.retrievalTimes.push(retrievalTime);
-
-      const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('[') || line.startsWith('{'));
-
-      if (jsonLine) {
-        const data = JSON.parse(jsonLine);
-        console.error(`🧠 Query with reasoning: ${retrievalTime}ms`);
-
-        return {
-          memories: Array.isArray(data) ? data : [data],
-          context: data.context || data.summary,
-          reasoning: data.reasoning || data.causal_chain,
-        };
+      let result: { memories: Memory[]; context?: string; reasoning?: string };
+      if (this.engine) {
+        const episodes = await this.engine.retrieveEpisodes(query, k, { minReward: minConfidence });
+        result = { memories: episodes.map(toMemory) };
+        if (episodes.length > 0) {
+          const ctx = await this.engine.synthesize(episodes);
+          result.context = ctx.summary;
+          if (synthesizeReasoning) {
+            result.reasoning = [...ctx.keyInsights, ...ctx.recommendations].join('\n');
+          }
+        }
+      } else {
+        result = await cliQuery(this.dbPath, query, { k, minConfidence, domain, synthesizeReasoning });
       }
 
-      return { memories: [] };
+      const retrievalTime = performance.now() - startTime;
+      this.performanceMetrics.retrievalTimes.push(retrievalTime);
+      console.error(`🧠 Query with context: ${retrievalTime.toFixed(2)}ms`);
+      return result;
     } catch (error: any) {
       console.error('❌ Error querying with context:', error.message);
       return { memories: [] };
@@ -305,88 +244,65 @@ export class EnhancedAgentDBMemory {
   }
 
   /**
-   * Consolidate skills with advanced filtering
+   * Consolidate successful episodes into skills. Returns the number of skills
+   * created. `enablePruning` is accepted for compatibility; agentdb has no
+   * skill pruning step in consolidation.
    */
   async consolidateSkills(options: {
     minAttempts?: number;
     minReward?: number;
     timeWindowDays?: number;
-    enablePruning?: boolean;  // NEW: Remove low-quality skills
+    enablePruning?: boolean;
   } = {}): Promise<number> {
     const startTime = Date.now();
-    const {
-      minAttempts = 3,
-      minReward = 0.7,
-      timeWindowDays = 7,
-      enablePruning = true,
-    } = options;
-
-    // SECURITY: Numeric values passed as separate args, not interpolated into a shell string.
-    const args = [
-      'agentdb', 'skill', 'consolidate',
-      String(minAttempts),
-      String(minReward),
-      String(timeWindowDays),
-      String(enablePruning),
-    ];
+    const { minAttempts = 3, minReward = 0.7, timeWindowDays = 7 } = options;
 
     try {
-      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
+      const created = this.engine
+        ? (await this.engine.consolidateSkills({ minAttempts, minReward, timeWindowDays })).created
+        : await cliConsolidate(this.dbPath, { minAttempts, minReward, timeWindowDays });
 
-      const consolidationTime = Date.now() - startTime;
-
-      // Parse number of skills consolidated
-      const match = stdout.match(/(\d+)\s+skills?\s+consolidated/i);
-      const skillsConsolidated = match ? parseInt(match[1]) : 0;
-
-      console.error(`🎯 Consolidated ${skillsConsolidated} skills in ${consolidationTime}ms`);
-      return skillsConsolidated;
+      console.error(`🎯 Consolidated ${created} skills in ${Date.now() - startTime}ms`);
+      return created;
     } catch (error: any) {
       console.error('❌ Error consolidating skills:', error.message);
       return 0;
     }
   }
 
-  /**
-   * Get skill library with semantic search
-   */
+  /** Search the skill library semantically, then order by `sortBy`. */
   async searchSkills(
     query: string,
     options: {
       k?: number;
       minSuccessRate?: number;
-      sortBy?: 'success_rate' | 'avg_reward' | 'num_attempts' | 'last_used';
+      sortBy?: SortBy;
     } = {}
   ): Promise<Skill[]> {
-    const startTime = Date.now();
+    const startTime = performance.now();
     const { k = 10, minSuccessRate = 0.5, sortBy = 'success_rate' } = options;
 
-    // SECURITY: query and sortBy passed as separate args.
-    const args = [
-      'agentdb', 'skill', 'search', query,
-      '--k', String(k),
-      '--min-success-rate', String(minSuccessRate),
-      '--sort-by', sortBy,
-      '--format', 'json',
-    ];
-
     try {
-      const { stdout } = await spawnAsync('npx', args, AGENTDB_ENV(this.dbPath));
-
-      const searchTime = Date.now() - startTime;
-
-      const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('[') || line.startsWith('{'));
-
-      if (jsonLine) {
-        const data = JSON.parse(jsonLine);
-        const skills = Array.isArray(data) ? data : [data];
-
-        console.error(`🔍 Found ${skills.length} skills in ${searchTime}ms`);
-        return skills;
+      let skills: Skill[];
+      if (this.engine) {
+        const key = SORT_KEYS[sortBy] ?? 'successRate';
+        skills = (await this.engine.searchSkills(query, k, minSuccessRate))
+          .map((s) => ({
+            name: s.name,
+            description: s.description,
+            successRate: s.successRate,
+            avgReward: s.avgReward,
+            numAttempts: s.uses,
+            lastUsed: s.lastUsed,
+            bestStrategy: s.metadata.strategy,
+          }))
+          .sort((a, b) => Number(b[key] ?? 0) - Number(a[key] ?? 0));
+      } else {
+        skills = await cliSearchSkills(this.dbPath, query, { k, minSuccessRate, sortBy });
       }
 
-      return [];
+      console.error(`🔍 Found ${skills.length} skills in ${(performance.now() - startTime).toFixed(2)}ms`);
+      return skills;
     } catch (error: any) {
       console.error('❌ Error searching skills:', error.message);
       return [];
@@ -396,12 +312,12 @@ export class EnhancedAgentDBMemory {
   /**
    * Generate self-critique for an episode
    */
-  private async generateCritique(episode: Episode): Promise<string> {
+  private generateCritique(episode: Episode): string {
     if (!episode.success) {
       return `Failed to complete ${episode.taskName}: ${episode.outcome}. Need to analyze failure modes.`;
     }
 
-    const critiques = [
+    return [
       `Successfully completed ${episode.taskName} with ${(episode.confidence * 100).toFixed(1)}% confidence. `,
       episode.strategy ? `Strategy "${episode.strategy}" was effective. ` : '',
       episode.metadata?.latency
@@ -409,65 +325,56 @@ export class EnhancedAgentDBMemory {
         : '',
       'Could explore alternative approaches for comparison.',
     ].join('');
-
-    return critiques;
   }
 
   /**
    * Get comprehensive statistics with performance metrics
    */
   async getStats(): Promise<MemoryStats> {
+    const { retrievalTimes, cacheHits, cacheMisses } = this.performanceMetrics;
+    const avgRetrievalTime = retrievalTimes.length > 0
+      ? retrievalTimes.reduce((a, b) => a + b, 0) / retrievalTimes.length
+      : 0;
+    const totalCacheRequests = cacheHits + cacheMisses;
+    const cacheHitRate = totalCacheRequests > 0 ? cacheHits / totalCacheRequests : 0;
+
+    let counts = { episodes: 0, skills: 0 };
     try {
-      const { stdout } = await spawnAsync('npx', ['agentdb', 'db', 'stats', '--format', 'json'], AGENTDB_ENV(this.dbPath));
-
-      const lines = stdout.trim().split('\n');
-      const jsonLine = lines.find(line => line.startsWith('{'));
-
-      const dbStats = jsonLine ? JSON.parse(jsonLine) : {};
-
-      // Calculate performance metrics
-      const avgRetrievalTime = this.performanceMetrics.retrievalTimes.length > 0
-        ? this.performanceMetrics.retrievalTimes.reduce((a, b) => a + b, 0) / this.performanceMetrics.retrievalTimes.length
-        : 0;
-
-      const totalCacheRequests = this.performanceMetrics.cacheHits + this.performanceMetrics.cacheMisses;
-      const cacheHitRate = totalCacheRequests > 0
-        ? this.performanceMetrics.cacheHits / totalCacheRequests
-        : 0;
-
-      return {
-        totalEpisodes: dbStats.total_episodes || 0,
-        totalSkills: dbStats.total_skills || 0,
-        avgRetrievalTime: parseFloat(avgRetrievalTime.toFixed(3)),
-        cacheHitRate: parseFloat((cacheHitRate * 100).toFixed(2)),
-        dbSize: dbStats.db_size_bytes || 0,
-      };
+      counts = this.engine ? this.engine.counts() : await cliCounts(this.dbPath);
     } catch (error: any) {
       console.error('❌ Error getting stats:', error.message);
-      return {
-        totalEpisodes: 0,
-        totalSkills: 0,
-        avgRetrievalTime: 0,
-        cacheHitRate: 0,
-        dbSize: 0,
-      };
     }
+
+    let dbSize = 0;
+    try {
+      dbSize = statSync(this.dbPath).size;
+    } catch {
+      // Not written to disk yet.
+    }
+
+    return {
+      totalEpisodes: counts.episodes,
+      totalSkills: counts.skills,
+      avgRetrievalTime: parseFloat(avgRetrievalTime.toFixed(3)),
+      cacheHitRate: parseFloat((cacheHitRate * 100).toFixed(2)),
+      dbSize,
+    };
   }
 
   /**
-   * Optimize database performance
+   * Optimize database performance: REINDEX and VACUUM in-process; the CLI
+   * fallback also runs agentdb's optimize-vectors.
    */
   async optimize(): Promise<void> {
     const startTime = Date.now();
 
     try {
-      // SECURITY: All three maintenance commands use spawnAsync with argument arrays.
-      await spawnAsync('npx', ['agentdb', 'db', 'vacuum'], AGENTDB_ENV(this.dbPath));
-      await spawnAsync('npx', ['agentdb', 'db', 'reindex'], AGENTDB_ENV(this.dbPath));
-      await spawnAsync('npx', ['agentdb', 'db', 'optimize-vectors'], AGENTDB_ENV(this.dbPath));
-
-      const optimizeTime = Date.now() - startTime;
-      console.error(`⚙️ Database optimized in ${optimizeTime}ms`);
+      if (this.engine) {
+        this.engine.optimize();
+      } else {
+        await cliOptimize(this.dbPath);
+      }
+      console.error(`⚙️ Database optimized in ${Date.now() - startTime}ms`);
     } catch (error: any) {
       console.error('⚠️ Optimization warning:', error.message);
     }
@@ -486,6 +393,10 @@ export class EnhancedAgentDBMemory {
   }
 
   async close(): Promise<void> {
+    if (this.engine) {
+      await this.engine.close();
+      this.engine = null;
+    }
     this.initialized = false;
   }
 }
