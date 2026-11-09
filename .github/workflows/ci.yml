@@ -64,7 +64,7 @@ jobs:
           - pkg: cli
             name: "@agentic-robotics/cli"
             test: node bin/cli.js --version
-            smoke: node -e "require('@agentic-robotics/cli')" && npx --no agentic-robotics --version
+            smoke: node -e "require('@agentic-robotics/cli')" && test "$("$PWD/node_modules/.bin/agentic-robotics" --version)" = "$(node -p "require('@agentic-robotics/cli/package.json').version")"
           - pkg: mcp
             name: "@agentic-robotics/mcp"
             # vitest 4 + agentdb 3 trips an npm arborist crash on the dev tree only;
@@ -76,7 +76,7 @@ jobs:
             name: agentic-robotics
             test: "true"
             # The meta package has no entry point; check it delivers its three packages and the bins.
-            smoke: node -e "for (const p of ['@agentic-robotics/core','@agentic-robotics/cli','@agentic-robotics/mcp']) require.resolve(p + '/package.json');" && npx --no agentic-robotics --version
+            smoke: node -e "for (const p of ['@agentic-robotics/core','@agentic-robotics/cli','@agentic-robotics/mcp']) require.resolve(p + '/package.json');" && test "$("$PWD/node_modules/.bin/agentic-robotics" --version)" = "$(node -p "require('@agentic-robotics/cli/package.json').version")"
           - pkg: linux-x64-gnu
             name: "@agentic-robotics/linux-x64-gnu"
             test: node -e "require('./agentic-robotics.linux-x64-gnu.node')"

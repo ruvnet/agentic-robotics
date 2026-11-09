@@ -88,6 +88,8 @@ Agentic Robotics provides a modular architecture—use what you need:
 | **[@agentic-robotics/cli](https://www.npmjs.com/package/@agentic-robotics/cli)** | Command-line tools | 2.2 KB | [![npm](https://img.shields.io/npm/v/@agentic-robotics/cli)](https://www.npmjs.com/package/@agentic-robotics/cli) | `npm install @agentic-robotics/cli` |
 | **[@agentic-robotics/mcp](https://www.npmjs.com/package/@agentic-robotics/mcp)** | MCP server (21 AI tools) | 26.1 KB | [![npm](https://img.shields.io/npm/v/@agentic-robotics/mcp)](https://www.npmjs.com/package/@agentic-robotics/mcp) | `npm install @agentic-robotics/mcp` |
 
+The meta-package has no code of its own: the `agentic-robotics` command comes from `@agentic-robotics/cli`, so `agentic-robotics --version` prints the CLI's version, not the meta-package's. Use `npm ls agentic-robotics` to see the meta-package version.
+
 ### Platform Binaries (Auto-installed)
 
 | Package | Platform | npm | Status |
