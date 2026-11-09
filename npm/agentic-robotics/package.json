@@ -1,6 +1,6 @@
 {
   "name": "agentic-robotics",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "High-performance agentic robotics framework with ROS2 compatibility - Complete toolkit",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@agentic-robotics/core": "^0.2.1",
-    "@agentic-robotics/cli": "^0.2.3",
-    "@agentic-robotics/mcp": "^0.2.5"
+    "@agentic-robotics/cli": "^0.2.5",
+    "@agentic-robotics/mcp": "^0.2.6"
   }
 }
