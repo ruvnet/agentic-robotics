@@ -4,10 +4,10 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { AgentDBMemory } from '../src/memory.js';
 
-// Runs the real `agentdb` CLI that this package depends on. agentdb 3.x exits 1
-// from `reflexion store` and `skill consolidate` on the native better-sqlite3
-// backend (it calls `db.save()`), so this guards the AGENTDB_FORCE_SQLJS env.
-describe('AgentDBMemory (real agentdb CLI)', () => {
+const strip = (s: unknown) => String(s).replace(/\x1b\[[0-9;]*m/g, '');
+
+// Imports the real `agentdb` package and drives it in-process.
+describe('AgentDBMemory (real agentdb import, in-process)', () => {
   let dir: string;
   let memory: AgentDBMemory;
 
@@ -22,29 +22,28 @@ describe('AgentDBMemory (real agentdb CLI)', () => {
     rmSync(dir, { recursive: true, force: true });
   });
 
-  it('stores episodes, consolidates skills and reports stats without CLI errors', async () => {
-    await memory.storeEpisode({
-      sessionId: 's1',
-      taskName: 'grasp cup',
-      confidence: 0.9,
-      success: true,
-      outcome: 'picked up',
-    });
-    await memory.storeEpisode({
-      sessionId: 's1',
-      taskName: 'navigate',
-      confidence: 0.8,
-      success: true,
-      outcome: 'arrived',
-    });
+  it('stores, filters, consolidates and counts episodes', async () => {
+    await memory.storeEpisode({ sessionId: 's1', taskName: 'grasp cup', confidence: 0.9, success: true, outcome: 'picked up' });
+    await memory.storeEpisode({ sessionId: 's1', taskName: 'grasp cup', confidence: 0.2, success: false, outcome: 'dropped' });
+
+    const all = await memory.retrieveMemories('grasp cup', 5);
+    expect(all.map((m) => m.outcome).sort()).toEqual(['dropped', 'picked up']);
+
+    const successes = await memory.retrieveMemories('grasp cup', 5, { onlySuccesses: true });
+    expect(successes.map((m) => m.outcome)).toEqual(['picked up']);
+    expect(successes[0]).toMatchObject({ task: 'grasp cup', confidence: 0.9, success: true });
+
+    const confident = await memory.queryWithContext('grasp cup', { minConfidence: 0.5 });
+    expect(confident.memories.map((m) => m.outcome)).toEqual(['picked up']);
 
     await expect(
       memory.consolidateSkills({ minAttempts: 1, minReward: 0.5, timeWindowDays: 7 })
     ).resolves.toBeUndefined();
 
     const stats = await memory.getStats();
-    const text = String(stats.stats).replace(/\x1b\[[0-9;]*m/g, '');
-    expect(text).toMatch(/episodes:\s*2 records/);
+    expect(strip(stats.stats)).toMatch(/episodes:\s*2 records/);
+    // The CLI prints a "Database Statistics" banner; the in-process engine does not.
+    expect(strip(stats.stats)).not.toMatch(/Database Statistics/);
   }, 180_000);
 
   it('keeps every episode when stores run concurrently', async () => {
@@ -61,7 +60,6 @@ describe('AgentDBMemory (real agentdb CLI)', () => {
     );
 
     const stats = await memory.getStats();
-    const text = String(stats.stats).replace(/\x1b\[[0-9;]*m/g, '');
-    expect(text).toMatch(/episodes:\s*5 records/);
+    expect(strip(stats.stats)).toMatch(/episodes:\s*5 records/);
   }, 300_000);
 });

@@ -6,6 +6,7 @@
  */
 
 import { spawn } from 'child_process';
+import { InProcessAgentDB } from './agentdb-engine.js';
 
 export interface Episode {
   sessionId: string;
@@ -91,6 +92,8 @@ function spawnOnce(
 export class AgentDBMemory {
   private dbPath: string;
   private initialized: boolean = false;
+  /** In-process agentdb; null means the CLI fallback is in use. */
+  private engine: InProcessAgentDB | null = null;
 
   constructor(dbPath: string) {
     // Validate dbPath to prevent path traversal
@@ -102,6 +105,15 @@ export class AgentDBMemory {
 
   async initialize(): Promise<void> {
     if (this.initialized) return;
+
+    // Prefer the agentdb library in-process; fall back to the CLI only when the
+    // optional package cannot be imported.
+    this.engine = await InProcessAgentDB.open(this.dbPath);
+    if (this.engine) {
+      console.error('AgentDB initialized in-process:', this.dbPath);
+      this.initialized = true;
+      return;
+    }
 
     try {
       // Initialize AgentDB database - use spawn with argument array for security
@@ -137,6 +149,11 @@ export class AgentDBMemory {
     }
 
     try {
+      if (this.engine) {
+        await this.engine.storeEpisode(episode);
+        return;
+      }
+
       // Use spawn with argument array to prevent command injection
       const { code, stderr } = await spawnAsync(
         'npx',
@@ -177,6 +194,14 @@ export class AgentDBMemory {
   ): Promise<Memory[]> {
     if (!this.initialized) {
       throw new Error('AgentDB not initialized. Call initialize() first.');
+    }
+
+    if (this.engine) {
+      try {
+        return await this.engine.retrieve(query, k, options);
+      } catch (error: any) {
+        throw new Error(`Failed to retrieve memories for query "${query}": ${error.message}`);
+      }
     }
 
     // Build safe argument array
@@ -233,6 +258,15 @@ export class AgentDBMemory {
     }
 
     const { k = 5, minConfidence = 0.0, domain } = options;
+
+    if (this.engine) {
+      try {
+        // `domain` has no in-process equivalent; reward is the confidence filter.
+        return { memories: await this.engine.retrieve(query, k, { minReward: minConfidence }) };
+      } catch (error: any) {
+        throw new Error(`Failed to query with context "${query}": ${error.message}`);
+      }
+    }
 
     // Build safe argument array
     const args = [
@@ -291,6 +325,11 @@ export class AgentDBMemory {
     const { minAttempts = 3, minReward = 0.7, timeWindowDays = 7 } = options;
 
     try {
+      if (this.engine) {
+        await this.engine.consolidateSkills({ minAttempts, minReward, timeWindowDays });
+        return;
+      }
+
       const { code, stderr } = await spawnAsync(
         'npx',
         [
@@ -321,6 +360,10 @@ export class AgentDBMemory {
     }
 
     try {
+      if (this.engine) {
+        return { stats: this.engine.stats() };
+      }
+
       const { stdout, code, stderr } = await spawnAsync('npx', ['agentdb', 'db', 'stats'], {
         ...AGENTDB_ENV(this.dbPath),
       });
@@ -336,6 +379,10 @@ export class AgentDBMemory {
   }
 
   async close(): Promise<void> {
+    if (this.engine) {
+      await this.engine.close();
+      this.engine = null;
+    }
     this.initialized = false;
   }
 }
