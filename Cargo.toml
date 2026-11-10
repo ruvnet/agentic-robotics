@@ -24,7 +24,10 @@ readme = "README.md"
 
 [workspace.dependencies]
 # Middleware
-zenoh = "1.0"
+# Default features minus `auth_pubkey`, `auth_usrpwd` and `transport_multilink` (which
+# implies auth_pubkey): the only paths to rsa 0.9 (RUSTSEC-2023-0071,
+# no fixed 0.9.x; zenoh-transport pins ^0.9). Zenoh auth is not used by this workspace.
+zenoh = { version = "1.0", default-features = false, features = ["transport_compression", "transport_quic", "transport_quic_datagram", "transport_tcp", "transport_tls", "transport_udp", "transport_unixsock-stream", "transport_ws"] }
 rustdds = "0.11"
 
 # Async runtime

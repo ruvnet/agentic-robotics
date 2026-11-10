@@ -12,8 +12,6 @@ all-features = false
 version = 2
 yanked = "deny"
 ignore = [
-    # rsa 0.9 Marvin timing side channel; fix is rsa 0.10, pinned by zenoh-transport.
-    { id = "RUSTSEC-2023-0071", reason = "rsa 0.9 pinned by zenoh-transport; no fixed 0.9.x" },
     # net2 deprecated; reached via rustdds -> mio-extras -> mio 0.6.
     { id = "RUSTSEC-2020-0016", reason = "net2 unmaintained, pulled by rustdds via mio 0.6" },
     # paste unmaintained; reached via rustdds -> cdr-encoding.
