@@ -263,7 +263,7 @@ See full documentation at [ruv.io/docs](https://ruv.io/docs)
 ## Requirements
 
 - Node.js >= 18.0.0
-- @agentic-robotics/core ^0.1.3
+- @agentic-robotics/core 0.2.4
 - agentdb 3.10.0 (optional, pinned exactly; without it the memory falls back to the `npx agentdb` CLI)
 - agentic-flow ^1.10.2
 - better-sqlite3 ^12.4.1

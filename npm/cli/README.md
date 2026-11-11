@@ -316,7 +316,7 @@ For more information, see [@agentic-robotics/mcp](https://www.npmjs.com/package/
 ## Requirements
 
 - Node.js >= 14.0.0
-- @agentic-robotics/core (peer dependency)
+- @agentic-robotics/core 0.2.4 (pinned exactly)
 
 ## Related Packages
 

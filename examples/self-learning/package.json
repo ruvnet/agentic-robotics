@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/self-learning",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "AI-powered self-learning optimization system with swarm intelligence, PSO, NSGA-II, evolutionary algorithms for autonomous robotics, multi-agent systems, and continuous learning",
   "type": "module",
   "main": "./dist/index.js",
@@ -88,7 +88,7 @@
     "prettier": "^3.2.5"
   },
   "peerDependencies": {
-    "@agentic-robotics/core": "0.2.3"
+    "@agentic-robotics/core": "0.2.4"
   },
   "peerDependenciesMeta": {
     "@agentic-robotics/core": {
