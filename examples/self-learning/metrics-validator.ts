@@ -345,7 +345,7 @@ class MetricsValidator {
       const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
       const deps = packageJson.dependencies || {};
 
-      const requiredDeps = ['agentdb', 'agentic-flow', '@modelcontextprotocol/sdk'];
+      const requiredDeps = ['agentic-flow', '@modelcontextprotocol/sdk'];
 
       for (const dep of requiredDeps) {
         if (deps[dep]) {

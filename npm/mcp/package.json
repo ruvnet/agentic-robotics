@@ -44,7 +44,7 @@
     "bench:agentdb": "npm run build && node bench/agentdb-latency.mjs"
   },
   "dependencies": {
-    "@agentic-robotics/core": "^0.2.1",
+    "@agentic-robotics/core": "0.2.3",
     "@modelcontextprotocol/sdk": ">=1.25.4",
     "better-sqlite3": "^12.4.1"
   },

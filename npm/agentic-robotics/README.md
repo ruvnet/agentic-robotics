@@ -125,45 +125,24 @@ npm install agentic-robotics
 
 ### Your First Robot Program (5 minutes)
 
+`agentic-robotics` installs `@agentic-robotics/core`, `@agentic-robotics/cli` and `@agentic-robotics/mcp`; the robot API is imported from `@agentic-robotics/core`.
+
 Create a file `my-first-robot.js`:
 
 ```javascript
-const { AgenticNode } = require('agentic-robotics');
+const { AgenticNode } = require('@agentic-robotics/core');
 
 async function main() {
-  // Create a robot node
   const robot = new AgenticNode('my-first-robot');
-  console.log('🤖 Robot initialized!');
-
-  // Create sensor publisher
   const sensorPub = await robot.createPublisher('/sensors/temperature');
 
-  // Create command subscriber
-  const commandSub = await robot.createSubscriber('/commands');
-
-  // Listen for commands
-  await commandSub.subscribe((message) => {
-    const cmd = JSON.parse(message);
-    console.log('📥 Received command:', cmd);
-
-    if (cmd.action === 'read_sensor') {
-      // Simulate sensor reading
-      const reading = {
-        value: 20 + Math.random() * 10,
-        unit: 'celsius',
-        timestamp: Date.now()
-      };
-
-      sensorPub.publish(JSON.stringify(reading));
-      console.log('🌡️  Published sensor reading:', reading);
-    }
-  });
-
-  console.log('✅ Robot ready! Listening for commands on /commands');
-  console.log('💡 Tip: Use the MCP server to control with AI!');
+  const reading = { value: 21.5, unit: 'celsius', timestamp: Date.now() };
+  await sensorPub.publish(JSON.stringify(reading));
+  console.log('Published:', reading);
+  console.log('Publisher stats:', sensorPub.getStats());
 }
 
-main().catch(console.error);
+main().catch((err) => { console.error(err); process.exit(1); });
 ```
 
 Run it:
@@ -172,11 +151,10 @@ Run it:
 node my-first-robot.js
 ```
 
-**Output:**
+**Output** (timestamp varies):
 ```
-🤖 Robot initialized!
-✅ Robot ready! Listening for commands on /commands
-💡 Tip: Use the MCP server to control with AI!
+Published: { value: 21.5, unit: 'celsius', timestamp: 1794402789447 }
+Publisher stats: { messages: 1, bytes: 57 }
 ```
 
 ### Control with AI (Claude Desktop)
@@ -218,7 +196,7 @@ Your robot received the command and reported 24.3°C.
 #### Step 1: Set Up Navigation
 
 ```javascript
-const { AgenticNode } = require('agentic-robotics');
+const { AgenticNode } = require('@agentic-robotics/core');
 
 class DeliveryRobot {
   constructor(name) {
@@ -355,7 +333,7 @@ main().catch(console.error);
 **Goal**: Coordinate 5 robots to efficiently fulfill warehouse orders.
 
 ```javascript
-const { AgenticNode } = require('agentic-robotics');
+const { AgenticNode } = require('@agentic-robotics/core');
 
 class WarehouseCoordinator {
   constructor() {
@@ -562,7 +540,7 @@ main().catch(console.error);
 // 1. Install and configure MCP server (see Quick Start above)
 
 // 2. Create a robot that responds to AI commands
-const { AgenticNode } = require('agentic-robotics');
+const { AgenticNode } = require('@agentic-robotics/core');
 
 class VoiceControlledRobot {
   constructor() {
