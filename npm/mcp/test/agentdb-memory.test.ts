@@ -63,3 +63,32 @@ describe('AgentDBMemory (real agentdb import, in-process)', () => {
     expect(strip(stats.stats)).toMatch(/episodes:\s*5 records/);
   }, 300_000);
 });
+
+// Imports `agentdb` directly: guards the exact pin and the library API the
+// in-process engine depends on, so an agentdb release that drops it fails here.
+describe('agentdb library (direct import)', () => {
+  it('is the pinned version and stores then retrieves an episode in-process', async () => {
+    const { readFileSync } = await import('fs');
+    const agentdb = await import('agentdb');
+    const { InProcessAgentDB } = await import('../src/agentdb-engine.js');
+
+    const pinned = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+      .optionalDependencies.agentdb;
+    const installed = (await import('agentdb/package.json', { with: { type: 'json' } })).default.version;
+    expect(pinned).toMatch(/^\d+\.\d+\.\d+$/);
+    expect(installed).toBe(pinned);
+    expect(typeof agentdb.AgentDB).toBe('function');
+
+    const dir = mkdtempSync(join(tmpdir(), 'agentdb-direct-'));
+    const engine = await InProcessAgentDB.open(join(dir, 'direct.db'));
+    try {
+      expect(engine).not.toBeNull();
+      await engine!.storeEpisode({ sessionId: 'd', taskName: 'dock to charger', confidence: 0.85, success: true, outcome: 'docked', strategy: 'slow approach' });
+      const got = await engine!.retrieve('dock to charger', 3);
+      expect(got[0]).toMatchObject({ task: 'dock to charger', outcome: 'docked', strategy: 'slow approach', success: true });
+    } finally {
+      await engine?.close();
+      rmSync(dir, { recursive: true, force: true });
+    }
+  }, 120_000);
+});

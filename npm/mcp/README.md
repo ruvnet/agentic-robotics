@@ -11,9 +11,8 @@
 ## Features
 
 - 🤖 **21 MCP Tools** - Complete AI-robot integration toolkit
-- 🧠 **AgentDB Memory** - 13,000x faster than CLI (reflexion, skills, causal reasoning)
+- 🧠 **AgentDB Memory** - Reflexion episodes and skills through the agentdb library, in-process (no process spawn per call)
 - 🌊 **Agentic Flow** - 66 AI agents + 213 MCP tools orchestration
-- ⚡ **High Performance** - 5,725 ops/sec storage throughput
 - 🔄 **Multi-Robot Swarm** - Coordinate multiple robots intelligently
 - 📊 **Performance Tracking** - Built-in metrics and benchmarking
 - 🎯 **Production Ready** - Optimized hybrid SQL implementation
@@ -115,21 +114,29 @@ Add to your Claude config (`~/Library/Application Support/Claude/claude_desktop_
 
 ## Performance
 
-### AgentDB Optimization
+### AgentDB memory latency
 
-| Operation | CLI Baseline | Hybrid (SQL) | Speedup |
-|-----------|-------------|--------------|---------|
-| Store Episode | 2,300ms | **0.175ms** | **13,168x** |
-| Bulk Store | 2,300ms | **0.008ms** | **271,205x** |
-| Retrieve | 2,000ms | **0.334ms** | **5,988x** |
-| Search Skills | 1,800ms | **0.512ms** | **3,516x** |
+`AgentDBMemory` drives the agentdb library in the server process. When the optional `agentdb` package cannot be imported, it falls back to spawning `npx agentdb` for each call. Measured per operation with `npm run bench:agentdb` from a repository checkout (agentdb 3.10.0, Node 22.23, Ryzen 9 9950X, on a shared host under load; 20 CLI and 200 in-process calls after one warm-up call):
 
-### Throughput
+| Operation | CLI fallback median (p95) | In-process median (p95) |
+|-----------|---------------------------|-------------------------|
+| `storeEpisode` | 683 ms (1,654 ms) | 6.7 ms (17.4 ms) |
+| `retrieveMemories` (k=5) | 515 ms (560 ms) | 11.7 ms (26.9 ms) |
+| `getStats` | 497 ms (777 ms) | 0.013 ms (0.016 ms) |
 
-- **Storage**: 5,725 ops/sec
-- **Bulk Operations**: 117,915 ops/sec
-- **Cache Hit Rate**: 87.3%
-- **Average Latency**: < 1ms
+Store and retrieve time in-process is mostly computing the embedding.
+
+### Use the memory from code
+
+```javascript
+import { AgentDBMemory } from '@agentic-robotics/mcp';
+
+const memory = new AgentDBMemory('./robot-memory.db');
+await memory.initialize();
+await memory.storeEpisode({ sessionId: 'demo', taskName: 'dock to charger', confidence: 0.9, success: true, outcome: 'docked' });
+console.log(await memory.retrieveMemories('dock to charger', 3));
+await memory.close();
+```
 
 ## Usage Examples
 
@@ -243,27 +250,10 @@ export MCP_CACHE_SIZE=1000
 
 ## Benchmarking
 
-Run comprehensive benchmarks:
+Measure AgentDB memory latency (in-process vs the CLI fallback) from a repository checkout:
 
 ```bash
-npm run benchmark:hybrid
-```
-
-Output:
-```
-📊 AGENTDB BENCHMARKS (SQL Storage + CLI Search)
-
-Store Episode (SQL):
-  Iterations:  1,000
-  Avg Time:    0.175ms
-  Ops/sec:     5,725
-  Speedup:     13,168x faster than CLI
-
-Bulk Store (SQL Transaction):
-  Iterations:  10
-  Avg Time:    0.008ms per episode
-  Ops/sec:     117,915
-  Speedup:     271,205x faster than CLI
+npm run bench:agentdb
 ```
 
 ## API Reference
@@ -274,7 +264,7 @@ See full documentation at [ruv.io/docs](https://ruv.io/docs)
 
 - Node.js >= 18.0.0
 - @agentic-robotics/core ^0.1.3
-- agentdb ^1.6.1
+- agentdb 3.10.0 (optional, pinned exactly; without it the memory falls back to the `npx agentdb` CLI)
 - agentic-flow ^1.10.2
 - better-sqlite3 ^12.4.1
 

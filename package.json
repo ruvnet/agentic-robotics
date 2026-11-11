@@ -27,7 +27,7 @@
     "vitest": "^4.1.7"
   },
   "dependencies": {
-    "agentdb": "^3.7.2",
+    "agentdb": "3.10.0",
     "agentic-flow": "^3.4.3",
     "@modelcontextprotocol/sdk": ">=1.25.4"
   },
