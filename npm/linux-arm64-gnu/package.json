@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/linux-arm64-gnu",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "agentic-robotics native bindings for Linux arm64 (GNU libc)",
   "main": "agentic-robotics.linux-arm64-gnu.node",
   "os": [

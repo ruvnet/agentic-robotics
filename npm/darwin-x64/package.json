@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/darwin-x64",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "agentic-robotics native bindings for macOS x64 (Intel)",
   "main": "agentic-robotics.darwin-x64.node",
   "os": [
