@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "High-performance agentic robotics framework - Core bindings",
   "main": "index.js",
   "types": "index.d.ts",
@@ -19,7 +19,13 @@
     "ros2",
     "middleware",
     "agents",
-    "napi-rs"
+    "napi-rs",
+    "rust",
+    "pub-sub",
+    "publisher-subscriber",
+    "real-time",
+    "native-bindings",
+    "agentic-robotics"
   ],
   "engines": {
     "node": ">= 14"
@@ -33,5 +39,8 @@
     "@agentic-robotics/darwin-x64": "^0.2.0",
     "@agentic-robotics/darwin-arm64": "^0.2.0"
   },
-  "homepage": "https://ruv.io"
+  "homepage": "https://ruv.io",
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues"
+  }
 }

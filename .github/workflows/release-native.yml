@@ -83,7 +83,19 @@ jobs:
       - name: glibc floor
         if: runner.os == 'Linux'
         timeout-minutes: 2
-        run: objdump -T "npm/${{ matrix.pkg }}/agentic-robotics.${{ matrix.pkg }}.node" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1
+        # Fails the build if the binary needs glibc newer than 2.34.
+        run: |
+          max="$(objdump -T "npm/${{ matrix.pkg }}/agentic-robotics.${{ matrix.pkg }}.node" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"
+          echo "highest glibc symbol: $max"
+          [ "$(printf '%s\n' "$max" GLIBC_2.34 | sort -V | tail -1)" = GLIBC_2.34 ] || { echo "glibc floor exceeded: $max > GLIBC_2.34"; exit 1; }
+      - name: no LDAPR (arm64)
+        if: matrix.pkg == 'linux-arm64-gnu'
+        timeout-minutes: 2
+        # LDAPR (ARMv8.3 RCpc) faults on Cortex-A53/A72 boards such as the Pi 3/4.
+        run: |
+          n="$(objdump -d "npm/${{ matrix.pkg }}/agentic-robotics.${{ matrix.pkg }}.node" | grep -c ldapr || true)"
+          echo "ldapr instructions: $n"
+          [ "$n" = 0 ]
       - name: load test (core test.js against this binary)
         if: matrix.load_test
         timeout-minutes: 5

@@ -25,6 +25,8 @@ export interface Memory {
   outcome: string;
   strategy?: string;
   timestamp: number;
+  /** Cosine similarity to the query, when ranked by the semantic path. */
+  similarity?: number;
 }
 
 // agentdb 3.x CLI calls `db.save()`, which only the sql.js backend implements;

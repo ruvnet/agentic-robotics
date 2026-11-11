@@ -3,6 +3,8 @@
 [![npm version](https://img.shields.io/npm/v/@agentic-robotics/linux-x64-gnu.svg)](https://www.npmjs.com/package/@agentic-robotics/linux-x64-gnu)
 [![License](https://img.shields.io/npm/l/@agentic-robotics/linux-x64-gnu.svg)](https://github.com/ruvnet/agentic-robotics)
 
+![agentic-robotics message flow: node, publisher, subscriber, MCP server, AgentDB](https://raw.githubusercontent.com/ruvnet/agentic-robotics/main/docs/assets/agentic-robotics-flow.svg)
+
 Native bindings for **agentic-robotics** on Linux x64 (GNU libc).
 
 This package contains the precompiled native binary for the agentic-robotics framework. It is automatically installed as an optional dependency when you install `@agentic-robotics/core` on a compatible platform.
@@ -48,6 +50,14 @@ musl-based distributions such as Alpine are not supported.
 ## Homepage
 
 Visit [ruv.io](https://ruv.io) for more information.
+
+## Quick start
+
+```bash
+npm install @agentic-robotics/core
+node -e "const { AgenticNode } = require('@agentic-robotics/core'); new AgenticNode('demo').createPublisher('/demo').then(async p => { await p.publish(JSON.stringify({ ok: true })); console.log(p.getStats()); })"
+# { messages: 1, bytes: 11 }
+```
 
 ## License
 

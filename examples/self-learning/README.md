@@ -7,6 +7,8 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![GitHub](https://img.shields.io/github/stars/ruvnet/agentic-robotics?style=social)](https://github.com/ruvnet/agentic-robotics)
 
+![agentic-robotics message flow: node, publisher, subscriber, MCP server, AgentDB](https://raw.githubusercontent.com/ruvnet/agentic-robotics/main/docs/assets/agentic-robotics-flow.svg)
+
 > 🤖 **Self-learning optimization system with swarm intelligence for autonomous robotic systems**
 
 Transform your robotics projects with AI-powered self-learning, multi-objective optimization, and swarm intelligence. Continuously improve performance through persistent memory, evolutionary strategies, and parallel AI agent swarms.

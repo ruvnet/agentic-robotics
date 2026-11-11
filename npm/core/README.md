@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/npm/l/@agentic-robotics/core.svg)](https://github.com/ruvnet/agentic-robotics)
 [![Node](https://img.shields.io/node/v/@agentic-robotics/core.svg)](https://nodejs.org)
 
+![agentic-robotics message flow: node, publisher, subscriber, MCP server, AgentDB](https://raw.githubusercontent.com/ruvnet/agentic-robotics/main/docs/assets/agentic-robotics-flow.svg)
+
 Core native bindings for the **agentic-robotics** framework - High-performance robotics middleware with ROS2 compatibility.
 
 ## Features

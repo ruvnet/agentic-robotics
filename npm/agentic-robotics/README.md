@@ -9,6 +9,8 @@
 [![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![Downloads](https://img.shields.io/npm/dm/agentic-robotics.svg)](https://www.npmjs.com/package/agentic-robotics)
 
+![agentic-robotics message flow: node, publisher, subscriber, MCP server, AgentDB](https://raw.githubusercontent.com/ruvnet/agentic-robotics/main/docs/assets/agentic-robotics-flow.svg)
+
 📚 **[Documentation](https://ruv.io/agentic-robotics/docs)** | 🚀 **[Getting Started](#-quick-start)** | 💬 **[Community](https://github.com/ruvnet/agentic-robotics/discussions)** | 🐛 **[Issues](https://github.com/ruvnet/agentic-robotics/issues)**
 
 ---

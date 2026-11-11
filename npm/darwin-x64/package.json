@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/darwin-x64",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "agentic-robotics native bindings for macOS x64 (Intel)",
   "main": "agentic-robotics.darwin-x64.node",
   "os": [
@@ -24,5 +24,21 @@
   "files": [
     "agentic-robotics.darwin-x64.node",
     "README.md"
-  ]
+  ],
+  "keywords": [
+    "agentic-robotics",
+    "robotics",
+    "ros2",
+    "native",
+    "napi-rs",
+    "rust",
+    "prebuilt-binary",
+    "macos",
+    "x64",
+    "darwin",
+    "intel-mac"
+  ],
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues"
+  }
 }
