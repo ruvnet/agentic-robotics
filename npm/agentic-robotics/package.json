@@ -1,6 +1,6 @@
 {
   "name": "agentic-robotics",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "High-performance agentic robotics framework with ROS2 compatibility - Complete toolkit",
   "repository": {
     "type": "git",
@@ -14,8 +14,13 @@
     "ros2",
     "middleware",
     "agents",
+    "ai-agents",
     "mcp",
-    "cli"
+    "model-context-protocol",
+    "cli",
+    "napi-rs",
+    "rust",
+    "agentic-robotics"
   ],
   "engines": {
     "node": ">= 14"
@@ -31,5 +36,8 @@
     "@agentic-robotics/core": "^0.2.1",
     "@agentic-robotics/cli": "^0.2.5",
     "@agentic-robotics/mcp": "^0.2.6"
+  },
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/linux-arm64-gnu",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "agentic-robotics native bindings for Linux arm64 (GNU libc)",
   "main": "agentic-robotics.linux-arm64-gnu.node",
   "os": [
@@ -24,5 +24,22 @@
   "files": [
     "agentic-robotics.linux-arm64-gnu.node",
     "README.md"
-  ]
+  ],
+  "keywords": [
+    "agentic-robotics",
+    "robotics",
+    "ros2",
+    "native",
+    "napi-rs",
+    "rust",
+    "prebuilt-binary",
+    "linux",
+    "arm64",
+    "glibc",
+    "aarch64",
+    "raspberry-pi"
+  ],
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues"
+  }
 }

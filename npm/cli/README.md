@@ -4,6 +4,8 @@
 [![Downloads](https://img.shields.io/npm/dm/@agentic-robotics/cli.svg)](https://www.npmjs.com/package/@agentic-robotics/cli)
 [![License](https://img.shields.io/npm/l/@agentic-robotics/cli.svg)](https://github.com/ruvnet/agentic-robotics)
 
+![agentic-robotics message flow: node, publisher, subscriber, MCP server, AgentDB](https://raw.githubusercontent.com/ruvnet/agentic-robotics/main/docs/assets/agentic-robotics-flow.svg)
+
 Command-line tools for the **agentic-robotics** framework.
 
 ## Features

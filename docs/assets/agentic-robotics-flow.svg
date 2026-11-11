@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 200" width="760" height="200" role="img" aria-labelledby="t d">
+  <title id="t">agentic-robotics message flow</title>
+  <desc id="d">An AgenticNode publishes JSON messages on a topic; subscribers receive them; the MCP server exposes the robot to AI agents and stores episodes in AgentDB memory.</desc>
+  <style>
+    .bg{fill:#0f172a}
+    .box{fill:#1e293b;stroke:#38bdf8;stroke-width:2;rx:10}
+    .lbl{fill:#e2e8f0;font:600 14px ui-sans-serif,system-ui,sans-serif;text-anchor:middle}
+    .sub{fill:#94a3b8;font:12px ui-monospace,SFMono-Regular,monospace;text-anchor:middle}
+    .wire{stroke:#334155;stroke-width:2;fill:none;stroke-dasharray:6 6}
+    .pkt{fill:#22d3ee}
+    .pkt2{fill:#a78bfa}
+  </style>
+  <rect class="bg" width="760" height="200" rx="14"/>
+  <rect class="box" x="20" y="60" width="150" height="70" rx="10"/>
+  <text class="lbl" x="95" y="90">AgenticNode</text>
+  <text class="sub" x="95" y="112">core (Rust/NAPI)</text>
+  <rect class="box" x="225" y="60" width="150" height="70" rx="10"/>
+  <text class="lbl" x="300" y="90">Publisher</text>
+  <text class="sub" x="300" y="112">/sensors/lidar</text>
+  <rect class="box" x="430" y="60" width="150" height="70" rx="10"/>
+  <text class="lbl" x="505" y="90">Subscriber</text>
+  <text class="sub" x="505" y="112">recv / tryRecv</text>
+  <rect class="box" x="620" y="20" width="120" height="60" rx="10"/>
+  <text class="lbl" x="680" y="47">MCP server</text>
+  <text class="sub" x="680" y="66">AI agents</text>
+  <rect class="box" x="620" y="115" width="120" height="60" rx="10"/>
+  <text class="lbl" x="680" y="142">AgentDB</text>
+  <text class="sub" x="680" y="161">episode memory</text>
+  <path id="p1" class="wire" d="M170 95 H225"/>
+  <path id="p2" class="wire" d="M375 95 H430"/>
+  <path id="p3" class="wire" d="M580 95 C600 95 600 50 620 50"/>
+  <path id="p4" class="wire" d="M580 95 C600 95 600 145 620 145"/>
+  <circle class="pkt" r="6"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
+  <circle class="pkt" r="6"><animateMotion dur="2.4s" begin="0.6s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+  <circle class="pkt2" r="5"><animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite"><mpath href="#p3"/></animateMotion></circle>
+  <circle class="pkt2" r="5"><animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite"><mpath href="#p4"/></animateMotion></circle>
+  <text class="sub" x="380" y="185">JSON messages flow node → topic → subscribers → agents + memory</text>
+</svg>

@@ -26,6 +26,57 @@ function execFileAsync(
   });
 }
 
+/**
+ * The slice of the optional `ruvector` package this module uses: an in-process
+ * ONNX sentence embedder (all-MiniLM-L6-v2, 384d) and cosine similarity.
+ */
+interface RuvectorEmbedder {
+  initOnnxEmbedder(): Promise<boolean>;
+  embed(text: string): Promise<{ embedding: number[] }>;
+  embedBatch(texts: string[]): Promise<Array<{ embedding: number[] }>>;
+  cosineSimilarity(a: number[], b: number[]): number;
+  getActiveModelId(): string | null;
+  getEmbedderProvenance?(): { embedderKind?: string } | null;
+}
+
+/** Rows that score at least this cosine similarity count as semantic hits. */
+export const SEMANTIC_MIN_SIMILARITY = 0.35;
+/** Upper bound on rows ranked per query (most recent first). */
+const SEMANTIC_CANDIDATE_LIMIT = 2000;
+
+let ruvectorPromise: Promise<RuvectorEmbedder | null> | null = null;
+
+/**
+ * Lazily load `ruvector` (optional dependency) and its ONNX embedder. Resolves
+ * to null when the package is not installed, the native module cannot load, or
+ * the model cannot be fetched, so callers fall back to keyword SQL.
+ */
+export function loadRuvectorEmbedder(): Promise<RuvectorEmbedder | null> {
+  if (!ruvectorPromise) {
+    ruvectorPromise = (async () => {
+      try {
+        const specifier = 'ruvector';
+        const mod: any = await import(specifier);
+        // CJS package: prefer the named exports; `default` is not the namespace under every loader.
+        const rv: RuvectorEmbedder = typeof mod.initOnnxEmbedder === 'function' ? mod : mod.default;
+        if (!(await rv.initOnnxEmbedder())) return null;
+        // Only a real ONNX model is semantic; never rank with a hash fallback.
+        const kind = rv.getEmbedderProvenance?.()?.embedderKind ?? '';
+        if (!kind.startsWith('onnx')) return null;
+        return rv;
+      } catch (error: any) {
+        console.error('ruvector semantic search unavailable:', error?.message ?? error);
+        return null;
+      }
+    })();
+  }
+  return ruvectorPromise;
+}
+
+function episodeText(row: { task: string; outcome: string | null; strategy?: string | null }): string {
+  return [row.task, row.outcome, row.strategy].filter(Boolean).join('. ');
+}
+
 export class HybridAgentDBMemory {
   private db!: Database.Database;
   private dbPath: string;
@@ -80,6 +131,17 @@ export class HybridAgentDBMemory {
       CREATE INDEX IF NOT EXISTS idx_success ON reflexion_episodes(success);
       CREATE INDEX IF NOT EXISTS idx_timestamp ON reflexion_episodes(timestamp);
     `);
+
+    // Cached sentence embeddings for the optional ruvector semantic path.
+    const columns = new Set(
+      (this.db.prepare('PRAGMA table_info(reflexion_episodes)').all() as Array<{ name: string }>).map(c => c.name)
+    );
+    if (!columns.has('embedding')) {
+      this.db.exec('ALTER TABLE reflexion_episodes ADD COLUMN embedding BLOB');
+    }
+    if (!columns.has('embedding_model')) {
+      this.db.exec('ALTER TABLE reflexion_episodes ADD COLUMN embedding_model TEXT');
+    }
 
     this.initialized = true;
     const elapsed = Date.now() - startTime;
@@ -209,6 +271,13 @@ export class HybridAgentDBMemory {
       console.error('Vector search failed, falling back to SQL:', error.message);
     }
 
+    // Semantic search over reflexion_episodes with the optional ruvector embedder.
+    const semantic = await this.semanticSearch(query, k, options);
+    if (semantic) {
+      this.updateRetrieveMetrics(performance.now() - startTime);
+      return semantic;
+    }
+
     // Fallback: Direct SQL query (keyword search)
     const whereConditions = ['1=1'];
     const params: any[] = [];
@@ -256,6 +325,85 @@ export class HybridAgentDBMemory {
       strategy: row.strategy,
       timestamp: row.timestamp,
     }));
+  }
+
+  /**
+   * Rank episodes by cosine similarity to the query using ruvector's ONNX
+   * embedder. The success/reward filters are applied in SQL before ranking.
+   * A row is a hit when it scores >= SEMANTIC_MIN_SIMILARITY or contains the
+   * query as a keyword. Embeddings are computed lazily and cached in the row.
+   * Returns null when ruvector is unavailable or fails, so the caller can fall
+   * back to keyword SQL.
+   */
+  private async semanticSearch(
+    query: string,
+    k: number,
+    options: { minReward?: number; onlySuccesses?: boolean; onlyFailures?: boolean }
+  ): Promise<Memory[] | null> {
+    const rv = await loadRuvectorEmbedder();
+    if (!rv) return null;
+
+    try {
+      const model = rv.getActiveModelId() ?? 'onnx';
+      const where = ['1=1'];
+      const params: any[] = [];
+      if (options.onlySuccesses) where.push('success = 1');
+      if (options.onlyFailures) where.push('success = 0');
+      if (options.minReward !== undefined) {
+        where.push('confidence >= ?');
+        params.push(options.minReward);
+      }
+
+      const rows = this.db.prepare(`
+        SELECT id, task_name as task, confidence, success, outcome, strategy, timestamp,
+               embedding, embedding_model
+        FROM reflexion_episodes
+        WHERE ${where.join(' AND ')}
+        ORDER BY timestamp DESC, id DESC
+        LIMIT ?
+      `).all(...params, SEMANTIC_CANDIDATE_LIMIT) as any[];
+      if (rows.length === 0) return [];
+
+      const missing = rows.filter(r => !r.embedding || r.embedding_model !== model);
+      if (missing.length > 0) {
+        const embedded = await rv.embedBatch(missing.map(episodeText));
+        const save = this.db.prepare('UPDATE reflexion_episodes SET embedding = ?, embedding_model = ? WHERE id = ?');
+        this.db.transaction(() => {
+          missing.forEach((row, i) => {
+            const buf = Buffer.from(new Float32Array(embedded[i].embedding).buffer);
+            save.run(buf, model, row.id);
+            row.embedding = buf;
+          });
+        })();
+      }
+
+      const q = (await rv.embed(query)).embedding;
+      const needle = query.toLowerCase();
+      return rows
+        .map(row => {
+          const buf: Buffer = row.embedding;
+          const vec = Array.from(new Float32Array(buf.buffer, buf.byteOffset, buf.byteLength / 4));
+          const keyword =
+            String(row.task).toLowerCase().includes(needle) ||
+            String(row.outcome ?? '').toLowerCase().includes(needle);
+          return { row, score: rv.cosineSimilarity(q, vec), keyword };
+        })
+        .filter(r => r.keyword || r.score >= SEMANTIC_MIN_SIMILARITY)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, k)
+        .map(({ row, score }) => ({
+          task: row.task,
+          confidence: row.confidence,
+          success: row.success === 1,
+          outcome: row.outcome,
+          strategy: row.strategy,
+          timestamp: row.timestamp,
+          similarity: score,
+        }));
+    } catch (error: any) {
+      console.error('ruvector semantic search failed, falling back to SQL:', error?.message ?? error);
+      return null;
+    }
   }
 
   /**

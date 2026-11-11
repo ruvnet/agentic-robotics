@@ -4,6 +4,8 @@
 [![Downloads](https://img.shields.io/npm/dm/@agentic-robotics/mcp.svg)](https://www.npmjs.com/package/@agentic-robotics/mcp)
 [![License](https://img.shields.io/npm/l/@agentic-robotics/mcp.svg)](https://github.com/ruvnet/agentic-robotics)
 
+![agentic-robotics message flow: node, publisher, subscriber, MCP server, AgentDB](https://raw.githubusercontent.com/ruvnet/agentic-robotics/main/docs/assets/agentic-robotics-flow.svg)
+
 **Model Context Protocol (MCP) server** for agentic robotics with AgentDB memory and agentic-flow orchestration.
 
 ## Features
@@ -15,6 +17,7 @@
 - 🔄 **Multi-Robot Swarm** - Coordinate multiple robots intelligently
 - 📊 **Performance Tracking** - Built-in metrics and benchmarking
 - 🎯 **Production Ready** - Optimized hybrid SQL implementation
+- 🔎 **Semantic recall** - With the optional `ruvector` package installed, `HybridAgentDBMemory.retrieveMemories` ranks episodes by meaning (ONNX all-MiniLM-L6-v2); without it, keyword SQL search is used
 
 ## Installation
 

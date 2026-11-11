@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/linux-x64-gnu",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "agentic-robotics native bindings for Linux x64 (GNU)",
   "main": "agentic-robotics.linux-x64-gnu.node",
   "os": [
@@ -20,5 +20,21 @@
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://ruv.io"
+  "homepage": "https://ruv.io",
+  "keywords": [
+    "agentic-robotics",
+    "robotics",
+    "ros2",
+    "native",
+    "napi-rs",
+    "rust",
+    "prebuilt-binary",
+    "linux",
+    "x64",
+    "glibc",
+    "x86-64"
+  ],
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues"
+  }
 }

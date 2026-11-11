@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/cli",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "CLI tools for agentic robotics framework",
   "bin": {
     "agentic-robotics": "./bin/cli.js"
@@ -13,7 +13,13 @@
   "keywords": [
     "robotics",
     "ros",
-    "cli"
+    "ros2",
+    "cli",
+    "command-line",
+    "agentic-robotics",
+    "agents",
+    "pub-sub",
+    "middleware"
   ],
   "engines": {
     "node": ">= 14"
@@ -39,5 +45,8 @@
     "agentic-flow": {
       "optional": true
     }
+  },
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues"
   }
 }

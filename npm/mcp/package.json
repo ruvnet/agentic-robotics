@@ -1,6 +1,6 @@
 {
   "name": "@agentic-robotics/mcp",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Model Context Protocol server for agentic robotics with AgentDB integration",
   "type": "module",
   "main": "dist/index.js",
@@ -17,8 +17,15 @@
     "robotics",
     "mcp",
     "model-context-protocol",
+    "mcp-server",
     "agentdb",
-    "agentic-flow"
+    "agentic-flow",
+    "ai-agents",
+    "ros2",
+    "semantic-search",
+    "vector-memory",
+    "ruvector",
+    "agentic-robotics"
   ],
   "engines": {
     "node": ">= 18"
@@ -61,6 +68,10 @@
     }
   },
   "optionalDependencies": {
-    "agentdb": "^3.7.2"
+    "agentdb": "^3.7.2",
+    "ruvector": "0.3.24"
+  },
+  "bugs": {
+    "url": "https://github.com/ruvnet/agentic-robotics/issues"
   }
 }
